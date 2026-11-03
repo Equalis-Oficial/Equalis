@@ -1,0 +1,12 @@
+{
+  "name": "equalis-root",
+  "version": "1.0.0",
+  "description": "Equalis — Plataforma Mobile de Empregabilidade e Controle de Vagas PcD (UNICEPLAC)",
+  "scripts": {
+    "start": "./start.sh",
+    "backend": "cd backend && npm start",
+    "mobile": "cd mobile && npx expo start -c",
+    "test": "cd backend && npm test"
+  }
+}
+

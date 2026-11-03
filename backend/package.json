@@ -1,0 +1,14 @@
+{
+  "name": "equalis-backend",
+  "version": "1.0.0",
+  "description": "API REST e Persistência MySQL para a Plataforma Equalis (Inclusão PcD no Mercado de Trabalho)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node src/tests/runTests.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "mysql2": "^3.11.0"
+  }
+}

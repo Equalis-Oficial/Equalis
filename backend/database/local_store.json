@@ -1,0 +1,132 @@
+{
+  "deficiencias": [
+    {
+      "id": 1,
+      "categoria": "Deficiência Física",
+      "descricao": "Alteração completa ou parcial de um ou mais segmentos do corpo humano, com suporte de mobilidade e ergonomia."
+    },
+    {
+      "id": 2,
+      "categoria": "Deficiência Visual",
+      "descricao": "Cegueira, baixa visão ou visão monocular, com suporte de leitores de tela, braille e alto contraste."
+    },
+    {
+      "id": 3,
+      "categoria": "Deficiência Auditiva",
+      "descricao": "Perda bilateral, parcial ou total da audição, com suporte em Libras e comunicação visual."
+    },
+    {
+      "id": 4,
+      "categoria": "Deficiência Intelectual",
+      "descricao": "Limitações adaptativas com suporte de comunicação simples, rotinas estruturadas e mentoria inclusiva."
+    },
+    {
+      "id": 5,
+      "categoria": "Deficiência Psicossocial / Mental",
+      "descricao": "Condições neurodivergentes ou psicossociais (TEA, TDAH) com suporte sensorial e flexibilidade."
+    }
+  ],
+  "empresas": [
+    {
+      "id": 1,
+      "nome_fantasia": "Centro Universitário UNICEPLAC",
+      "cnpj": "00394460005887",
+      "email": "rh@uniceplac.edu.br",
+      "senha": "scrypt$485ab00308011d2994313d70ac5fe1e9$0b2f90b593eecf2044b79b7eefffc976ff37b4c88500da145f9fc702491531c8c85608b609df0bf403927d306b35fdf9f63a05805f3562dbdca55b1f8a538116",
+      "descricao": "Centro Universitário do Planalto Central Apparecido dos Santos (Gama - DF). Instituição comprometida com a acessibilidade universal e inclusão PcD.",
+      "created_at": "2026-08-04T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "nome_fantasia": "Inclusiva Tech Brasil",
+      "cnpj": "11222333000181",
+      "email": "talentos@inclusivatech.com.br",
+      "senha": "scrypt$03fdfca48c76c16e9d43e2e6a6ca1c8c$360bc746a06c4b898372d33fbbb66f7464554cfc2b2962693beef2a9a890c46c28a96b0c5c25a03e9b844edc5013a4216eb4efc94c45a02f0ef7d25356194e71",
+      "descricao": "Empresa de tecnologia focada em soluções digitais acessíveis e contratação afirmativa de pessoas com deficiência.",
+      "created_at": "2026-08-04T10:00:00Z"
+    }
+  ],
+  "candidatos": [
+    {
+      "id": 1,
+      "nome": "Maria Ledentsova",
+      "email": "maria@equalis.com.br",
+      "senha": "scrypt$14928c05fad59f90273e31492a9a839a$6dfff914d139a709b49e782f8292007dd8a44199e00e45d86a129655cfad22bf44f50569c0915847575f8c71e67f5e987059868e033ec691bfe7947b395e7aab",
+      "cpf": "52998224725",
+      "resumo_profissional": "Especialista em Marketing Digital, Comunicação Inclusiva e Atendimento ao Público.",
+      "url_curriculo": "curriculo_maria_ledentsova.pdf",
+      "cidade": "Guarulhos",
+      "estado": "SP",
+      "area_atuacao": "Marketing",
+      "servicos": [
+        "Marketing Digital",
+        "Comunicação Acessível"
+      ],
+      "deficiencias_ids": [
+        1
+      ],
+      "usa_tela_acessivel": 0,
+      "created_at": "2026-08-04T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "nome": "nico",
+      "email": "nico@gmail.com",
+      "senha": "***",
+      "cpf": "05049870119",
+      "resumo_profissional": "",
+      "url_curriculo": null,
+      "cidade": "",
+      "estado": "",
+      "area_atuacao": "TI",
+      "servicos": [],
+      "deficiencias_ids": [
+        1
+      ],
+      "url_laudo_medico": null,
+      "usa_tela_acessivel": false,
+      "created_at": "2026-10-27T12:50:56.771Z",
+      "pais": "Brasil",
+      "conexoesCount": 0,
+      "competencias": [],
+      "prefiroNaoInformar": false,
+      "disponivelPara": ""
+    }
+  ],
+  "vagas": [],
+  "candidaturas": [],
+  "formacoes": [],
+  "experiencias": [],
+  "publicacoes": [],
+  "conexoes": [
+    {
+      "id": 1,
+      "candidato_id": null,
+      "nome_contato": "Charles Oliveira",
+      "cargo_contato": "Gerente de projetos com foco em crescimento em equipe",
+      "conexoes_em_comum": 15,
+      "total_conexoes": 312,
+      "conectado": false
+    },
+    {
+      "id": 2,
+      "candidato_id": null,
+      "nome_contato": "Helena Costa",
+      "cargo_contato": "Tech Recruiter Especialista em Diversidade e Inclusão PcD",
+      "conexoes_em_comum": 22,
+      "total_conexoes": 418,
+      "conectado": false
+    },
+    {
+      "id": 3,
+      "candidato_id": null,
+      "nome_contato": "Rafael Mendes",
+      "cargo_contato": "Engenheiro de Software & Consultor de Acessibilidade WCAG",
+      "conexoes_em_comum": 9,
+      "total_conexoes": 204,
+      "conectado": false
+    }
+  ],
+  "mensagens": [],
+  "comentarios": []
+}
