@@ -14,6 +14,28 @@ import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
 import BottomTabBar from '../../components/common/BottomTabBar';
 
+const cleanUtf8 = (str) => {
+  if (typeof str !== 'string') return str || '';
+  return str
+    .replace(/Ã£/g, 'ã')
+    .replace(/Ã¡/g, 'á')
+    .replace(/Ã©/g, 'é')
+    .replace(/Ã­/g, 'í')
+    .replace(/Ã³/g, 'ó')
+    .replace(/Ãº/g, 'ú')
+    .replace(/Ã§/g, 'ç')
+    .replace(/Ã/g, 'í');
+};
+
+const getContactAvatar = (contact) => {
+  if (!contact || !contact.nome_contato) return FIGMA_ASSETS.fotoCharles;
+  const n = contact.nome_contato.toLowerCase();
+  if (n.includes('charles')) return FIGMA_ASSETS.fotoCharles;
+  if (n.includes('helena')) return FIGMA_ASSETS.atendente1;
+  if (n.includes('rafael')) return FIGMA_ASSETS.atendente2;
+  return FIGMA_ASSETS.atendente3;
+};
+
 export default function RedeScreen() {
   const { theme, isAccessibleMode, speak } = useAccessibility();
   const { conexoes, alternarConexao, candidatoPerfil } = useAuthAndData();
@@ -25,21 +47,23 @@ export default function RedeScreen() {
   const totalMinhasConexoes =
     typeof candidatoPerfil?.conexoesCount === 'number' ? candidatoPerfil.conexoesCount : 0;
 
+  const totalContatos = (conexoes || []).length;
   const currentAccessibleContact =
-    conexoes[accessibleIndex % conexoes.length] || conexoes[0];
+    totalContatos > 0 ? conexoes[accessibleIndex % totalContatos] : null;
 
   const handleProximoAcessivel = () => {
-    const nextIdx = (accessibleIndex + 1) % conexoes.length;
+    if (totalContatos === 0) return;
+    const nextIdx = (accessibleIndex + 1) % totalContatos;
     setAccessibleIndex(nextIdx);
     const nextContact = conexoes[nextIdx];
     speak(
-      `Contato sugerido: ${nextContact.nome_contato}, ${nextContact.cargo_contato}. Vocês possuem ${nextContact.conexoes_em_comum} conexões em comum. Status atual: ${nextContact.conectado ? 'Conectado' : 'Não conectado'}.`
+      `Contato sugerido: ${nextContact.nome_contato}, ${cleanUtf8(nextContact.cargo_contato)}. Vocês possuem ${nextContact.conexoes_em_comum} conexões em comum. Status atual: ${nextContact.conectado ? 'Conectado' : 'Não conectado'}.`
     );
   };
 
   const handleToggleConexao = (id, nome) => {
     alternarConexao(id);
-    const c = conexoes.find((item) => item.id === id);
+    const c = (conexoes || []).find((item) => item.id === id);
     const novoStatus = !c?.conectado;
     if (novoStatus) {
       speak(`Solicitação de conexão enviada para ${nome}!`);
@@ -152,120 +176,127 @@ export default function RedeScreen() {
 
         {/* MODO ACESSÍVEL (#372:616 e 29_REDE_ACESSIVEL.png) */}
         {isAccessibleMode ? (
-          <View
-            style={[
-              styles.accessibleCard,
-              {
-                backgroundColor: colors.primaryDark,
-                borderRadius: radius.lg,
-                borderColor: colors.cardBorder,
-              },
-            ]}
-          >
-            {/* Foto Real de Charles Oliveira no Modo Acessível */}
-            <View style={styles.accessibleAvatarBox}>
-              <Image
-                source={FIGMA_ASSETS.fotoCharles}
-                style={styles.accessibleAvatarImg}
-                accessible={true}
-                accessibilityLabel={`Foto de perfil de ${currentAccessibleContact.nome_contato}`}
-              />
-            </View>
-
-            <Text
+          currentAccessibleContact ? (
+            <View
               style={[
-                styles.accessibleName,
-                { color: '#FFFFFF', fontSize: 28, fontWeight: '700', marginTop: 12 },
-              ]}
-              accessibilityRole="header"
-            >
-              {currentAccessibleContact.nome_contato}
-            </Text>
-
-            <Text
-              style={[
-                styles.accessibleRole,
-                { color: '#EAF4FF', fontSize: 18, marginTop: 6, lineHeight: 26, textAlign: 'center' },
+                styles.accessibleCard,
+                {
+                  backgroundColor: colors.primaryDark,
+                  borderRadius: radius.lg,
+                  borderColor: colors.cardBorder,
+                },
               ]}
             >
-              {currentAccessibleContact.cargo_contato}
-            </Text>
-
-            <View style={styles.accessibleStatsRow}>
-              <View style={styles.accessibleStatItem}>
-                <Text style={styles.accessibleStatLabel}>Conexões em comum</Text>
-                <Text style={styles.accessibleStatValue}>
-                  {currentAccessibleContact.conexoes_em_comum}
+              {/* Contador de Sugestões Acessível */}
+              <View style={styles.accessibleCounterBadge}>
+                <Text style={styles.accessibleCounterText}>
+                  {`Sugestão ${(accessibleIndex % totalContatos) + 1} de ${totalContatos}`}
                 </Text>
               </View>
 
-              <View style={styles.accessibleStatItem}>
-                <Text style={styles.accessibleStatLabel}>Total da rede</Text>
-                <Text style={styles.accessibleStatValue}>
-                  {currentAccessibleContact.total_conexoes}
-                </Text>
+              {/* Foto Real do Contato Específico no Modo Acessível */}
+              <View style={styles.accessibleAvatarBox}>
+                <Image
+                  source={getContactAvatar(currentAccessibleContact)}
+                  style={styles.accessibleAvatarImg}
+                  accessible={true}
+                  accessibilityLabel={`Foto de perfil de ${currentAccessibleContact.nome_contato}`}
+                />
               </View>
-            </View>
 
-            {/* Botões Grandes do Modo Acessível: "Adicionar" e "Próximo" */}
-            <View style={styles.accessibleButtonsRow}>
-              <TouchableOpacity
-                onPress={() =>
-                  handleToggleConexao(
-                    currentAccessibleContact.id,
-                    currentAccessibleContact.nome_contato
-                  )
-                }
-                accessible={true}
-                accessibilityRole="button"
-                accessibilityLabel={
-                  currentAccessibleContact.conectado
-                    ? 'Desconectar de ' + currentAccessibleContact.nome_contato
-                    : 'Adicionar conexão com ' + currentAccessibleContact.nome_contato
-                }
+              <Text
                 style={[
-                  styles.accessibleActionBtn,
-                  {
-                    backgroundColor: currentAccessibleContact.conectado
-                      ? colors.success
-                      : '#FFFFFF',
-                  },
+                  styles.accessibleName,
+                  { color: '#FFFFFF', fontSize: 28, fontWeight: '700', marginTop: 12 },
+                ]}
+                accessibilityRole="header"
+              >
+                {currentAccessibleContact.nome_contato}
+              </Text>
+
+              <Text
+                style={[
+                  styles.accessibleRole,
+                  { color: '#EAF4FF', fontSize: 18, marginTop: 6, lineHeight: 26, textAlign: 'center' },
                 ]}
               >
-                <Text
+                {cleanUtf8(currentAccessibleContact.cargo_contato)}
+              </Text>
+
+              <View style={styles.accessibleStatsRow}>
+                <View style={styles.accessibleStatItem}>
+                  <Text style={styles.accessibleStatLabel}>Conexões em comum</Text>
+                  <Text style={styles.accessibleStatValue}>
+                    {currentAccessibleContact.conexoes_em_comum}
+                  </Text>
+                </View>
+
+                <View style={styles.accessibleStatItem}>
+                  <Text style={styles.accessibleStatLabel}>Total da rede</Text>
+                  <Text style={styles.accessibleStatValue}>
+                    {currentAccessibleContact.total_conexoes}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Botões Grandes do Modo Acessível: "Adicionar" e "Próximo" */}
+              <View style={styles.accessibleButtonsRow}>
+                <TouchableOpacity
+                  onPress={() =>
+                    handleToggleConexao(
+                      currentAccessibleContact.id,
+                      currentAccessibleContact.nome_contato
+                    )
+                  }
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    currentAccessibleContact.conectado
+                      ? 'Desconectar de ' + currentAccessibleContact.nome_contato
+                      : 'Adicionar conexão com ' + currentAccessibleContact.nome_contato
+                  }
                   style={[
-                    styles.accessibleActionBtnText,
+                    styles.accessibleActionBtn,
                     {
-                      color: currentAccessibleContact.conectado
-                        ? '#FFFFFF'
-                        : colors.primaryDark,
+                      backgroundColor: currentAccessibleContact.conectado
+                        ? colors.success
+                        : '#FFFFFF',
                     },
                   ]}
                 >
-                  {currentAccessibleContact.conectado ? 'Conectado ✓' : 'Adicionar +'}
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.accessibleActionBtnText,
+                      {
+                        color: currentAccessibleContact.conectado
+                          ? '#FFFFFF'
+                          : colors.primaryDark,
+                      },
+                    ]}
+                  >
+                    {currentAccessibleContact.conectado ? 'Conectado ✓' : 'Adicionar +'}
+                  </Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={handleProximoAcessivel}
-                accessible={true}
-                accessibilityRole="button"
-                accessibilityLabel="Ver próximo contato sugerido"
-                style={[
-                  styles.accessibleNextBtn,
-                  { backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: '#FFFFFF' },
-                ]}
-              >
-                <Text style={styles.accessibleNextBtnText}>Próximo →</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleProximoAcessivel}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="Ver próximo contato sugerido"
+                  style={[
+                    styles.accessibleNextBtn,
+                    { backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: '#FFFFFF' },
+                  ]}
+                >
+                  <Text style={styles.accessibleNextBtnText}>Próximo →</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          ) : null
         ) : (
           /* MODO PADRÃO COMPLETO (#232:168 e 25_REDE_PADRAO.png) */
           <View style={styles.contactsGrid}>
-            {conexoes.map((item, index) => {
-              const isCharles = item.nome_contato.includes('Charles') || index === 0;
-
+            {conexoes.map((item) => {
               return (
                 <View
                   key={item.id}
@@ -279,25 +310,19 @@ export default function RedeScreen() {
                   ]}
                 >
                   <View style={styles.contactCardTop}>
-                    {/* Foto Real de Charles Oliveira no primeiro card (#25_REDE_PADRAO.png) */}
+                    {/* Foto Real de Cada Contato */}
                     <View
                       style={[
                         styles.contactAvatarWrap,
                         { borderColor: colors.primary },
                       ]}
                     >
-                      {isCharles ? (
-                        <Image
-                          source={FIGMA_ASSETS.fotoCharles}
-                          style={styles.contactAvatarImg}
-                          accessible={true}
-                          accessibilityLabel={`Foto de ${item.nome_contato}`}
-                        />
-                      ) : (
-                        <View style={styles.contactAvatarPlaceholder}>
-                          <Text style={{ fontSize: 26 }}>👨🏽‍💼</Text>
-                        </View>
-                      )}
+                      <Image
+                        source={getContactAvatar(item)}
+                        style={styles.contactAvatarImg}
+                        accessible={true}
+                        accessibilityLabel={`Foto de ${item.nome_contato}`}
+                      />
                     </View>
 
                     <View style={styles.contactInfoCol}>
@@ -316,7 +341,7 @@ export default function RedeScreen() {
                         ]}
                         numberOfLines={2}
                       >
-                        {item.cargo_contato}
+                        {cleanUtf8(item.cargo_contato)}
                       </Text>
                       <Text
                         style={[
@@ -498,6 +523,19 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  accessibleCounterBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  accessibleCounterText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 12,
+    letterSpacing: 0.3,
   },
   accessibleCard: {
     padding: 24,

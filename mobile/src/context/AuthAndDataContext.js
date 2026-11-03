@@ -437,23 +437,22 @@ export function AuthAndDataProvider({ children }) {
   const registrarCandidato = useCallback(async (dados) => {
     const sessionEpoch = ++activeSessionRef.current;
     let saved = null;
+    let res = null;
     try {
-      const res = await apiFetch(`${API_BASE_URL}/candidatos`, {
+      res = await apiFetch('/candidatos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dados),
       });
       saved = await res.json();
-      if (!res.ok) {
-        throw new Error(saved.erro || 'Falha ao registrar candidato no servidor.');
-      }
-    } catch (err) {
-      if (err.message && !err.message.includes('Falha ao registrar')) {
-        throw new Error(
-          `Não foi possível conectar ao servidor (${activeApiBaseUrl}). Verifique se o backend está em execução: ${err.message}`
-        );
-      }
-      throw err;
+    } catch (networkErr) {
+      throw new Error(
+        `Não foi possível conectar ao servidor (${getActiveApiBaseUrl()}). Verifique se o backend está em execução: ${networkErr.message}`
+      );
+    }
+
+    if (!res.ok) {
+      throw new Error(saved?.erro || 'Falha ao registrar candidato no servidor.');
     }
 
     if (activeSessionRef.current !== sessionEpoch) return saved;
@@ -486,23 +485,22 @@ export function AuthAndDataProvider({ children }) {
   const registrarEmpresa = useCallback(async (dados) => {
     const sessionEpoch = ++activeSessionRef.current;
     let saved = null;
+    let res = null;
     try {
-      const res = await apiFetch(`${API_BASE_URL}/empresas`, {
+      res = await apiFetch('/empresas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dados),
       });
       saved = await res.json();
-      if (!res.ok) {
-        throw new Error(saved.erro || 'Falha ao registrar empresa no servidor.');
-      }
-    } catch (err) {
-      if (err.message && !err.message.includes('Falha ao registrar')) {
-        throw new Error(
-          `Não foi possível conectar ao servidor (${activeApiBaseUrl}). Verifique se o backend está em execução: ${err.message}`
-        );
-      }
-      throw err;
+    } catch (networkErr) {
+      throw new Error(
+        `Não foi possível conectar ao servidor (${getActiveApiBaseUrl()}). Verifique se o backend está em execução: ${networkErr.message}`
+      );
+    }
+
+    if (!res.ok) {
+      throw new Error(saved?.erro || 'Falha ao registrar empresa no servidor.');
     }
 
     if (activeSessionRef.current !== sessionEpoch) return saved;

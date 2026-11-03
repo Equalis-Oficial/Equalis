@@ -227,6 +227,8 @@ export default function AccessibleHeader({
                   },
                 ]}
                 numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                minimumFontScale={0.75}
               >
                 {title}
               </Text>
@@ -441,6 +443,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 6,
   },
   brandLogoCenter: {
     width: 140,
