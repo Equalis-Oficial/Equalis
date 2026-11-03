@@ -42,3 +42,7 @@ Thumbs.db
 *.swp
 *.swo
 
+# Documentos e referências de apoio de desenvolvimento
+doc/
+ref/
+

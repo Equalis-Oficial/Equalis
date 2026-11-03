@@ -91,3 +91,4 @@ export function useFilteredJobs(vagas = [], candidatoPerfil = null, initialSearc
     handleClearFilters,
   };
 }
+

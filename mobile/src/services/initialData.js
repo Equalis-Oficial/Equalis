@@ -150,3 +150,4 @@ export const DEFAULT_EMPRESA = {
 export const INITIAL_CONEXOES = [];
 export const INITIAL_PUBLICACOES = [];
 export const INITIAL_MENSAGENS = [];
+
