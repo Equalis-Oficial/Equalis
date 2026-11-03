@@ -605,8 +605,8 @@ export function AuthAndDataProvider({ children }) {
   // Métodos do Diagrama de Classes: Empresa.cadastrarVaga() + VagaAcessibilidade.vincularAcessibilidade()
   const publicarVaga = useCallback(
     (dadosVaga) => {
-      const companyId = empresaPerfil.id || Date.now();
-      const companyNome = dadosVaga.empresa_nome || empresaPerfil.nome_fantasia || 'Empresa Inclusiva';
+      const companyId = empresaPerfil?.id || Date.now();
+      const companyNome = dadosVaga.empresa_nome || empresaPerfil?.nome_fantasia || 'Empresa Inclusiva';
       const novaVaga = {
         id: Date.now(),
         empresa_id: companyId,
@@ -696,7 +696,7 @@ export function AuthAndDataProvider({ children }) {
       const item = { id: Date.now(), ...novaFormacao };
       setFormacoes((prev) => [item, ...prev]);
       if (candidatoPerfil?.id) {
-        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil.id}/formacoes`, {
+        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil?.id}/formacoes`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(novaFormacao),
@@ -711,7 +711,7 @@ export function AuthAndDataProvider({ children }) {
       const item = { id: Date.now(), ...novaExp };
       setExperiencias((prev) => [item, ...prev]);
       if (candidatoPerfil?.id) {
-        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil.id}/experiencias`, {
+        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil?.id}/experiencias`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(novaExp),
@@ -726,15 +726,15 @@ export function AuthAndDataProvider({ children }) {
       const novaPub = {
         id: Date.now(),
         autor_tipo: userType,
-        autor_id: userType === 'EMPRESA' ? (empresaPerfil.id || Date.now()) : (candidatoPerfil.id || Date.now()),
+        autor_id: userType === 'EMPRESA' ? (empresaPerfil?.id || Date.now()) : (candidatoPerfil?.id || Date.now()),
         autor_nome:
           userType === 'EMPRESA'
-            ? (empresaPerfil.nome_fantasia || 'Empresa Inclusiva')
-            : (candidatoPerfil.nome || 'Candidato PcD'),
+            ? (empresaPerfil?.nome_fantasia || 'Empresa Inclusiva')
+            : (candidatoPerfil?.nome || 'Candidato PcD'),
         autor_subtitulo:
           userType === 'EMPRESA'
             ? 'Empresa Inclusiva • Agora mesmo'
-            : `${candidatoPerfil.area_atuacao || 'Profissional PcD'}${candidatoPerfil.cidade ? ` • ${candidatoPerfil.cidade}, ${candidatoPerfil.estado}` : ''}`,
+            : `${candidatoPerfil?.area_atuacao || 'Profissional PcD'}${candidatoPerfil?.cidade ? ` • ${candidatoPerfil.cidade}, ${candidatoPerfil?.estado || 'DF'}` : ''}`,
         conteudo,
         vaga_id: vagaId,
         curtidas: 0,
@@ -803,8 +803,8 @@ export function AuthAndDataProvider({ children }) {
     async (publicacaoId, texto) => {
       const autor =
         userType === 'EMPRESA'
-          ? empresaPerfil.nome_fantasia || 'Empresa Inclusiva'
-          : candidatoPerfil.nome || 'Candidato PcD';
+          ? empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'
+          : candidatoPerfil?.nome || 'Candidato PcD';
       try {
         const res = await apiFetch(`${API_BASE_URL}/publicacoes/${publicacaoId}/comentarios`, {
           method: 'POST',
@@ -827,19 +827,19 @@ export function AuthAndDataProvider({ children }) {
         return { id: Date.now(), publicacao_id: publicacaoId, autor_nome: autor, texto };
       }
     },
-    [userType, empresaPerfil.nome_fantasia, candidatoPerfil.nome]
+    [userType, empresaPerfil?.nome_fantasia, candidatoPerfil?.nome]
   );
 
   const republicarPublicacao = useCallback(
     async (publicacaoId) => {
       const autor =
         userType === 'EMPRESA'
-          ? empresaPerfil.nome_fantasia || 'Empresa Inclusiva'
-          : candidatoPerfil.nome || 'Candidato PcD';
+          ? empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'
+          : candidatoPerfil?.nome || 'Candidato PcD';
       const subtitulo =
         userType === 'EMPRESA'
-          ? (empresaPerfil.cidade ? `${empresaPerfil.nome_fantasia || 'Empresa'} • ${empresaPerfil.cidade}` : (empresaPerfil.nome_fantasia || 'Empresa Inclusiva'))
-          : `${candidatoPerfil.area_atuacao || 'Profissional PcD'}${candidatoPerfil.cidade ? ` • ${candidatoPerfil.cidade}, ${candidatoPerfil.estado}` : ''}`;
+          ? (empresaPerfil?.cidade ? `${empresaPerfil?.nome_fantasia || 'Empresa'} • ${empresaPerfil?.cidade}` : (empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'))
+          : `${candidatoPerfil?.area_atuacao || 'Profissional PcD'}${candidatoPerfil?.cidade ? ` • ${candidatoPerfil?.cidade}, ${candidatoPerfil?.estado || 'DF'}` : ''}`;
       try {
         const res = await apiFetch(`${API_BASE_URL}/publicacoes/${publicacaoId}/republicar`, {
           method: 'POST',
@@ -873,7 +873,7 @@ export function AuthAndDataProvider({ children }) {
         return fallbackPub;
       }
     },
-    [userType, empresaPerfil.nome_fantasia, candidatoPerfil, publicacoes]
+    [userType, empresaPerfil?.nome_fantasia, candidatoPerfil, publicacoes]
   );
 
   const alternarConexao = useCallback((id) => {
@@ -892,7 +892,7 @@ export function AuthAndDataProvider({ children }) {
     );
     setCandidatoPerfil((prev) => ({
       ...prev,
-      conexoesCount: Math.max(0, (prev.conexoesCount || 0) + (conectouAgora ? 1 : -1)),
+      conexoesCount: Math.max(0, (prev?.conexoesCount || 0) + (conectouAgora ? 1 : -1)),
     }));
     apiFetch(`${API_BASE_URL}/conexoes/${id}/conectar`, {
       method: 'POST',
@@ -906,8 +906,8 @@ export function AuthAndDataProvider({ children }) {
       const activeUserId = userType === 'EMPRESA' ? empresaPerfil?.id : candidatoPerfil?.id;
       const remetente =
         userType === 'EMPRESA'
-          ? empresaPerfil.nome_fantasia || 'Empresa Inclusiva'
-          : candidatoPerfil.nome || 'Candidato PcD';
+          ? empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'
+          : candidatoPerfil?.nome || 'Candidato PcD';
       const cargo = userType === 'EMPRESA' ? 'Recrutamento Inclusivo' : 'Candidato PcD';
 
       const nova = {
@@ -938,7 +938,7 @@ export function AuthAndDataProvider({ children }) {
         }),
       }).catch(() => {});
     },
-    [userType, empresaPerfil?.id, empresaPerfil.nome_fantasia, candidatoPerfil?.id, candidatoPerfil.nome]
+    [userType, empresaPerfil?.id, empresaPerfil?.nome_fantasia, candidatoPerfil?.id, candidatoPerfil?.nome]
   );
 
   const selectedVaga = vagas.find((v) => v.id === selectedVagaId) || vagas[0];
@@ -951,12 +951,12 @@ export function AuthAndDataProvider({ children }) {
         vaga: vagaAssoc,
         candidato: cand.candidato || (cand.candidato_id === candidatoPerfil?.id && userType === 'CANDIDATO' ? {
           id: cand.candidato_id,
-          nome: candidatoPerfil.nome || 'Candidato PcD',
-          email: candidatoPerfil.email || '',
-          area_atuacao: candidatoPerfil.area_atuacao || 'Profissional PcD',
-          cidade: candidatoPerfil.cidade || 'São Paulo',
-          estado: candidatoPerfil.estado || 'SP',
-          resumo: candidatoPerfil.resumo_profissional || '',
+          nome: candidatoPerfil?.nome || 'Candidato PcD',
+          email: candidatoPerfil?.email || '',
+          area_atuacao: candidatoPerfil?.area_atuacao || 'Profissional PcD',
+          cidade: candidatoPerfil?.cidade || 'São Paulo',
+          estado: candidatoPerfil?.estado || 'SP',
+          resumo: candidatoPerfil?.resumo_profissional || '',
           laudo: 'laudo_cid_aprovado.pdf',
         } : {
           id: cand.candidato_id,
@@ -992,7 +992,7 @@ export function AuthAndDataProvider({ children }) {
     (formId) => {
       setFormacoes((prev) => prev.filter((f) => f.id !== formId));
       if (candidatoPerfil?.id) {
-        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil.id}/formacoes/${formId}`, {
+        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil?.id}/formacoes/${formId}`, {
           method: 'DELETE',
         }).catch(() => {});
       }
@@ -1004,7 +1004,7 @@ export function AuthAndDataProvider({ children }) {
     (expId) => {
       setExperiencias((prev) => prev.filter((e) => e.id !== expId));
       if (candidatoPerfil?.id) {
-        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil.id}/experiencias/${expId}`, {
+        apiFetch(`${API_BASE_URL}/candidatos/${candidatoPerfil?.id}/experiencias/${expId}`, {
           method: 'DELETE',
         }).catch(() => {});
       }

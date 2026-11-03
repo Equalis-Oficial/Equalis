@@ -147,6 +147,19 @@ export const DEFAULT_EMPRESA = {
   ],
 };
 
+export const EMPTY_EMPRESA = {
+  id: null,
+  nome_fantasia: '',
+  cnpj: '',
+  email: '',
+  descricao: '',
+  area_atuacao: '',
+  cidade: '',
+  estado: '',
+  pais: 'Brasil',
+  recursos_acessibilidade: [],
+};
+
 export const INITIAL_CONEXOES = [];
 export const INITIAL_PUBLICACOES = [];
 export const INITIAL_MENSAGENS = [];
