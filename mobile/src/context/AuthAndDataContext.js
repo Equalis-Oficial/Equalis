@@ -40,7 +40,7 @@ export {
 };
 
 const AuthAndDataContext = createContext(null);
-const API_BASE_URL = API_CANDIDATE_URLS[0] || 'http://10.80.99.211:3333/api';
+const API_BASE_URL = '/api';
 
 export function AuthAndDataProvider({ children }) {
   // Navegação estruturada entre as 36 telas do Figma
@@ -1128,7 +1128,7 @@ export function AuthAndDataProvider({ children }) {
     enviarMensagem,
     marcarMensagemComoLida,
     recarregarDados,
-    apiBaseUrl: API_BASE_URL,
+    apiBaseUrl: getActiveApiBaseUrl(),
   };
 
   return (

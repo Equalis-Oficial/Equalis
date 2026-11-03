@@ -77,22 +77,25 @@ export function buildCandidateApiUrls() {
     }
   }
 
-  // 5. Fallbacks locais de desenvolvimento (Rede Wi-Fi atual e Loopback)
+  // 5. Fallbacks locais de desenvolvimento (Loopback e desenvolvimento local)
+  addUrl('http://localhost:3333/api');
+  addUrl('http://127.0.0.1:3333/api');
+  addUrl('http://localhost:8081/api');
   addUrl('http://192.168.0.8:3333/api');
   addUrl('http://192.168.0.8:8081/api');
   addUrl('http://10.80.99.211:3333/api');
   addUrl('http://10.80.99.211:8081/api');
-  addUrl('http://localhost:3333/api');
-  addUrl('http://127.0.0.1:3333/api');
 
   return candidates;
 }
 
 export const API_CANDIDATE_URLS = buildCandidateApiUrls();
-let activeApiBaseUrl = API_CANDIDATE_URLS[0] || 'http://192.168.0.8:3333/api';
+let activeApiBaseUrl = null;
 
 export function getActiveApiBaseUrl() {
-  return activeApiBaseUrl;
+  if (activeApiBaseUrl) return activeApiBaseUrl;
+  const current = buildCandidateApiUrls();
+  return current[0] || 'http://localhost:3333/api';
 }
 
 export async function apiFetch(pathOrUrl, options = {}) {
@@ -111,10 +114,9 @@ export async function apiFetch(pathOrUrl, options = {}) {
   };
 
   const dynamicCandidates = buildCandidateApiUrls();
-  const orderedUrls = [
-    activeApiBaseUrl,
-    ...dynamicCandidates.filter((u) => u !== activeApiBaseUrl),
-  ];
+  const orderedUrls = activeApiBaseUrl
+    ? [activeApiBaseUrl, ...dynamicCandidates.filter((u) => u !== activeApiBaseUrl)]
+    : dynamicCandidates;
 
   let lastError = null;
   for (const base of orderedUrls) {

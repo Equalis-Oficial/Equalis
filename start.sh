@@ -14,6 +14,19 @@ echo " ♿ EQUALIS — PLATAFORMA DE EMPREGABILIDADE PCD (2026)"
 echo "======================================================="
 
 # --------------------------------------------------------------------
+# 0. VERIFICAÇÃO E INSTALAÇÃO DE DEPENDÊNCIAS (NPM)
+# --------------------------------------------------------------------
+if [ ! -d "$ROOT_DIR/backend/node_modules" ]; then
+  echo "📦 Dependências do backend não encontradas. Executando npm install no backend..."
+  (cd "$ROOT_DIR/backend" && npm install)
+fi
+
+if [ ! -d "$ROOT_DIR/mobile/node_modules" ]; then
+  echo "📦 Dependências do mobile não encontradas. Executando npm install no mobile..."
+  (cd "$ROOT_DIR/mobile" && npm install)
+fi
+
+# --------------------------------------------------------------------
 # 1. VERIFICAÇÃO DO DOCKER DAEMON
 # --------------------------------------------------------------------
 echo "▶ [1/4] Verificando se o serviço do Docker está ativo..."
