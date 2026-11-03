@@ -7,7 +7,7 @@ const TABS_CANDIDATO = [
   { id: 'HOME', label: 'Início', icon: '🏠', target: 'HOME' },
   { id: 'REDE', label: 'Rede', icon: '👥', target: 'REDE' },
   { id: 'PUBLICAR', label: 'Publicar', icon: '🖼️', target: 'CRIAR_PUBLICACAO' },
-  { id: 'NOTIFICACOES', label: 'Candidaturas', icon: '🔔', target: 'MINHAS_CANDIDATURAS' },
+  { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'MINHAS_CANDIDATURAS' },
   { id: 'VAGAS', label: 'Vagas', icon: '💼', target: 'EMPREGO' },
 ];
 

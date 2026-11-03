@@ -183,8 +183,10 @@ export default function PostCard({
         ]}
       >
         <View style={styles.likesCountWrap}>
-          <Text style={styles.heartIcon}>👍</Text>
-          <Text style={[typography.caption, { color: colors.textMuted }]}>
+          <View style={styles.likeBadgeCircle}>
+            <Text style={styles.likeThumbIcon}>👍</Text>
+          </View>
+          <Text style={[typography.caption, { color: colors.textMuted, marginLeft: 6, fontWeight: '600' }]}>
             {post.curtidas || 0}
           </Text>
         </View>
@@ -459,6 +461,17 @@ const styles = StyleSheet.create({
   likesCountWrap: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  likeBadgeCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#007ADE',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  likeThumbIcon: {
+    fontSize: 11,
   },
   heartIcon: {
     fontSize: 14,

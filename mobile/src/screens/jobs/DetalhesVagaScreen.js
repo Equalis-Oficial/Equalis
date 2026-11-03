@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
   },
   footerBtn: {
     paddingVertical: 14,
-    borderRadius: 14,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 3,

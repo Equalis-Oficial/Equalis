@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuthAndData } from '../../context/AuthAndDataContext';
-import AccessibleHeader from '../../components/common/AccessibleHeader';
 import BottomTabBar from '../../components/common/BottomTabBar';
 import HomeWelcomeBanner from '../../components/feed/HomeWelcomeBanner';
 import PostCard from '../../components/feed/PostCard';
 
 export default function HomeScreen() {
-  const { theme, isAccessibleMode, speak } = useAccessibility();
+  const { theme, isAccessibleMode, speak, isSpeaking, stopSpeaking } = useAccessibility();
   const {
     candidatoPerfil,
     empresaPerfil,
@@ -30,6 +30,7 @@ export default function HomeScreen() {
   } = useAuthAndData();
   const { colors, typography, radius } = theme;
 
+  const [feedSearch, setFeedSearch] = useState('');
   const [commentOpenPostId, setCommentOpenPostId] = useState(null);
   const [commentsMap, setCommentsMap] = useState({});
   const [commentInput, setCommentInput] = useState('');
@@ -37,6 +38,18 @@ export default function HomeScreen() {
   const primeiroNome = candidatoPerfil?.nome
     ? candidatoPerfil.nome.split(' ')[0]
     : (userType === 'EMPRESA' ? (empresaPerfil?.nome_fantasia || 'Empresa') : 'Candidato');
+
+  const filteredPublicacoes = useMemo(() => {
+    if (!feedSearch.trim()) return publicacoes;
+    const term = feedSearch.trim().toLowerCase();
+    return (publicacoes || []).filter((p) => {
+      const matchText = (p.conteudo || '').toLowerCase().includes(term);
+      const matchAuthor = (p.autor_nome || '').toLowerCase().includes(term);
+      const vagaVinculada = p.vaga_id ? (vagas || []).find((v) => v.id === p.vaga_id) : null;
+      const matchVaga = vagaVinculada ? (vagaVinculada.titulo || '').toLowerCase().includes(term) : false;
+      return matchText || matchAuthor || matchVaga;
+    });
+  }, [publicacoes, feedSearch, vagas]);
 
   const handleCurtir = (postId) => {
     curtirPublicacao(postId);
@@ -102,13 +115,17 @@ export default function HomeScreen() {
     ? `Painel da Empresa. Olá, você está no painel de gestão de vagas e publicações inclusivas.`
     : `Tela Inicial do Equalis. Olá ${primeiroNome}, seja bem-vindo ao feed de publicações e oportunidades inclusivas.`;
 
+  const handleToggleAudio = () => {
+    if (isSpeaking) {
+      stopSpeaking();
+    } else {
+      speak(audioSummary);
+    }
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <AccessibleHeader
-        title="Equalis"
-        showSearch={true}
-        audioSummary={audioSummary}
-      />
+    <View style={[styles.container, { backgroundColor: '#007ADE' }]}>
+      <StatusBar barStyle="light-content" backgroundColor="#007ADE" />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -116,11 +133,23 @@ export default function HomeScreen() {
         accessible={true}
         accessibilityLabel="Feed principal do aplicativo Equalis"
       >
-        {/* Banner Azul Acolhedor do Figma (#125:3790 e 11_HOME.png) */}
+        {/* Banner Azul Integrado do Figma (#125:3790 e 11_HOME.png) */}
         <HomeWelcomeBanner
           userType={userType}
           primeiroNome={primeiroNome}
           empresaNome={empresaPerfil?.nome_fantasia || 'Empresa'}
+          onAvatarPress={() => {
+            navigate(userType === 'EMPRESA' ? 'PERFIL_EMPRESA' : 'PERFIL_CANDIDATO');
+          }}
+          searchValue={feedSearch}
+          onSearchChange={setFeedSearch}
+          onSearchSubmit={() => {
+            if (feedSearch.trim()) {
+              speak(`Filtrando publicações por ${feedSearch}`);
+            }
+          }}
+          onMessagesPress={() => navigate('MENSAGENS')}
+          unreadMessagesCount={3}
           onActionPress={() => {
             if (userType === 'EMPRESA') {
               navigate('PUBLICAR_VAGA_EMPRESA');
@@ -128,17 +157,16 @@ export default function HomeScreen() {
               navigate('EMPREGO');
             }
           }}
+          onA11yPress={handleToggleAudio}
+          isSpeaking={isSpeaking}
           isAccessibleMode={isAccessibleMode}
           colors={colors}
           radius={radius}
         />
 
-        {/* Linha Divisória de Seção */}
-        <View style={[styles.sectionDivider, { backgroundColor: colors.dividerBeige }]} />
-
-        {/* FEED DE POSTAGENS */}
-        <View style={styles.feedContainer}>
-          {publicacoes.length === 0 ? (
+        {/* FEED DE POSTAGENS EM CONTÊINER BRANCO ARREDONDADO (FIGMA #125:3790) */}
+        <View style={[styles.feedContainer, { backgroundColor: colors.background }]}>
+          {filteredPublicacoes.length === 0 ? (
             <View
               style={[
                 styles.emptyFeedBox,
@@ -158,7 +186,7 @@ export default function HomeScreen() {
                   { color: colors.textPrimary, fontWeight: '700', textAlign: 'center', marginTop: 8 },
                 ]}
               >
-                Nenhuma publicação no momento
+                Nenhuma publicação encontrada
               </Text>
               <Text
                 style={[
@@ -166,20 +194,31 @@ export default function HomeScreen() {
                   { color: colors.textSecondary, textAlign: 'center', marginTop: 6, lineHeight: 20 },
                 ]}
               >
-                Compartilhe uma oportunidade ou atualização com a sua rede no Equalis.
+                {feedSearch.trim()
+                  ? `Nenhum resultado para "${feedSearch}". Tente outro termo.`
+                  : 'Compartilhe uma oportunidade ou atualização com a sua rede no Equalis.'}
               </Text>
-              <TouchableOpacity
-                onPress={() => navigate('PUBLICAR')}
-                accessible={true}
-                accessibilityRole="button"
-                accessibilityLabel="Criar nova publicação no feed"
-                style={[styles.emptyFeedBtn, { backgroundColor: colors.primaryDark, borderRadius: radius.md }]}
-              >
-                <Text style={styles.emptyFeedBtnText}>+ Criar Publicação</Text>
-              </TouchableOpacity>
+              {feedSearch.trim() ? (
+                <TouchableOpacity
+                  onPress={() => setFeedSearch('')}
+                  style={[styles.emptyFeedBtn, { backgroundColor: colors.primary, borderRadius: radius.md }]}
+                >
+                  <Text style={styles.emptyFeedBtnText}>Limpar Busca</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => navigate('PUBLICAR')}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="Criar nova publicação no feed"
+                  style={[styles.emptyFeedBtn, { backgroundColor: colors.primaryDark, borderRadius: radius.md }]}
+                >
+                  <Text style={styles.emptyFeedBtnText}>+ Criar Publicação</Text>
+                </TouchableOpacity>
+              )}
             </View>
           ) : (
-            publicacoes.map((post) => {
+            filteredPublicacoes.map((post) => {
               const postVaga = post.vaga_id ? (vagas || []).find((v) => v.id === post.vaga_id) : null;
               return (
                 <PostCard
@@ -205,10 +244,10 @@ export default function HomeScreen() {
               );
             })
           )}
-        </View>
 
-        {/* Espaçamento inferior para a BottomBar */}
-        <View style={{ height: 40 }} />
+          {/* Espaçamento inferior para a BottomBar */}
+          <View style={{ height: 60 }} />
+        </View>
       </ScrollView>
 
       {/* Barra de Navegação Inferior */}
@@ -222,14 +261,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 24,
-  },
-  sectionDivider: {
-    height: 8,
-    marginVertical: 12,
+    paddingBottom: 0,
   },
   feedContainer: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     paddingHorizontal: 16,
+    paddingTop: 16,
+    minHeight: 500,
   },
   emptyFeedBox: {
     padding: 24,

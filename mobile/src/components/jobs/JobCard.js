@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   detalhesVagaBtn: {
     paddingHorizontal: 22,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 20,
     elevation: 2,
     shadowColor: '#1F41BB',
     shadowOpacity: 0.3,
