@@ -1,17 +1,31 @@
 /**
- * Controller de Deficiências — Equalis
- * Categorias oficiais de deficiência previstas na legislação brasileira.
+ * Controller de Deficiências — Equalis (Clean MVC)
+ * Gerencia requisições HTTP para consulta do catálogo de acessibilidade LBI.
  */
-const { execMySQL } = require('../config/database');
-const { loadStore } = require('../models/dataStore');
+const deficienciaService = require('../services/deficienciaService');
 
-async function listar(req, res) {
-  const store = loadStore();
-  const rows = await execMySQL('SELECT * FROM Deficiencia ORDER BY id ASC');
-  return res.status(200).json(rows && rows.length ? rows : store.deficiencias);
+async function listar(req, res, next) {
+  try {
+    const deficiencias = await deficienciaService.listar();
+    return res.status(200).json(deficiencias);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function obter(req, res, next) {
+  try {
+    const deficiencia = await deficienciaService.obter(req.params.id);
+    if (!deficiencia) {
+      return res.status(404).json({ erro: 'Deficiência não encontrada.' });
+    }
+    return res.status(200).json(deficiencia);
+  } catch (err) {
+    next(err);
+  }
 }
 
 module.exports = {
   listar,
+  obter,
 };
-

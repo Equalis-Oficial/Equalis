@@ -6,7 +6,6 @@
 const http = require('http');
 const app = require('./app');
 const { initMySQLConnection } = require('./config/database');
-const { INITIAL_DATA } = require('./models/dataStore');
 
 function createServer() {
   return http.createServer(app);
@@ -39,5 +38,4 @@ if (require.main === module) {
 module.exports = {
   app,
   createServer,
-  INITIAL_DATA,
 };

@@ -1,13 +1,21 @@
 /**
  * Configuração da Aplicação Express — Equalis
- * Arquitetura MVC com rotas modulares, middlewares de CORS, parser JSON
- * e endpoints de sincronização e healthcheck.
+ * Arquitetura em Camadas (Routes ➔ Controllers ➔ Services ➔ Repositories)
+ * com middlewares de CORS, parser JSON, tratamento global de erros e persistência MySQL 8.
  */
 const express = require('express');
 const { isMySQLConnected } = require('./config/database');
-const { loadStore } = require('./models/dataStore');
+const errorHandler = require('./middlewares/errorHandler');
 
-// Importação das Rotas Modulares (MVC)
+// Serviços e Repositórios para Bootstrap
+const vagaService = require('./services/vagaService');
+const candidatoRepository = require('./repositories/candidatoRepository');
+const empresaRepository = require('./repositories/empresaRepository');
+const deficienciaService = require('./services/deficienciaService');
+const publicacaoService = require('./services/publicacaoService');
+const redeService = require('./services/redeService');
+
+// Importação das Rotas Modulares
 const authRoutes = require('./routes/authRoutes');
 const candidatosRoutes = require('./routes/candidatosRoutes');
 const empresasRoutes = require('./routes/empresasRoutes');
@@ -40,9 +48,9 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     projeto: 'Equalis - UNICEPLAC 2026',
-    arquitetura: 'MVC (Model-View-Controller) com Express.js',
+    arquitetura: 'Clean Layered Architecture (Routes ➔ Controllers ➔ Services ➔ Repositories)',
     mysqlConnected: isMySQLConnected(),
-    database: 'equalis_db (MySQL 8 / Store Sincronizada)',
+    database: 'equalis_db (MySQL 8)',
     tabelas_mer: [
       'Empresa',
       'Candidato',
@@ -61,12 +69,31 @@ app.get('/api/health', (req, res) => {
 });
 
 // 2. Sincronização Global Bootstrap
-app.get('/api/bootstrap', (req, res) => {
-  const store = loadStore();
-  res.status(200).json(store);
+app.get('/api/bootstrap', async (req, res, next) => {
+  try {
+    const [vagas, candidatos, empresas, deficiencias, publicacoes, conexoes] = await Promise.all([
+      vagaService.listar(),
+      candidatoRepository.listarTodos(),
+      empresaRepository.listarTodas(),
+      deficienciaService.listar(),
+      publicacaoService.listar(),
+      redeService.listarConexoes(),
+    ]);
+
+    res.status(200).json({
+      vagas,
+      candidatos,
+      empresas,
+      deficiencias,
+      publicacoes,
+      conexoes,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
-// 3. Montagem dos Módulos de Rotas (MVC)
+// 3. Montagem dos Módulos de Rotas
 app.use('/api/auth', authRoutes);
 app.use('/api/candidatos', candidatosRoutes);
 app.use('/api/empresas', empresasRoutes);
@@ -76,7 +103,7 @@ app.use('/api/publicacoes', publicacoesRoutes);
 app.use('/api/deficiencias', deficienciasRoutes);
 app.use('/api', redeRoutes);
 
-// Rotas de atalho para compatibilidade com versões anteriores
+// Rotas de atalho para compatibilidade
 app.post('/api/formacoes', candidatosController.adicionarFormacao);
 app.post('/api/experiencias', candidatosController.adicionarExperiencia);
 
@@ -85,11 +112,7 @@ app.use((req, res) => {
   res.status(404).json({ erro: 'Rota não encontrada na API Equalis.' });
 });
 
-// Tratamento de Erros Global
-app.use((err, req, res, next) => {
-  console.error('[Equalis API Error]:', err.message);
-  res.status(500).json({ erro: err.message || 'Erro interno no servidor Equalis.' });
-});
+// Tratamento Centralizado de Erros (AppError + Unhandled)
+app.use(errorHandler);
 
 module.exports = app;
-

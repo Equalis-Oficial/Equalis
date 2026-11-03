@@ -8,10 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { createServer } = require('../server');
 
-const STORE_PATH = path.join(__dirname, '..', '..', 'database', 'local_store.json');
-
 async function run() {
-  const storeBackup = fs.existsSync(STORE_PATH) ? fs.readFileSync(STORE_PATH, 'utf-8') : null;
   const server = createServer();
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
@@ -343,10 +340,6 @@ async function run() {
     console.log(' TODAS AS 24 ROTAS DA API PASSARAM COM 100% DE SUCESSO!');
     console.log('========================================================');
   } finally {
-    if (storeBackup !== null) {
-      fs.writeFileSync(STORE_PATH, storeBackup, 'utf-8');
-      console.log('✔ Banco de dados local restaurado com sucesso (sem poluição de testes).');
-    }
     server.close();
   }
 }
