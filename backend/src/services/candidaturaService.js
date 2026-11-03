@@ -44,3 +44,4 @@ module.exports = {
   atualizarStatus,
   excluir,
 };
+

@@ -95,3 +95,4 @@ module.exports = {
   atualizarPerfil,
   listarTodas,
 };
+

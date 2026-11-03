@@ -105,3 +105,4 @@ module.exports = {
   marcarMensagemLida,
   excluirMensagem,
 };
+
