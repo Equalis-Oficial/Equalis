@@ -83,6 +83,7 @@ export async function apiFetch(pathOrUrl, options = {}) {
 
   const headers = {
     'Bypass-Tunnel-Reminder': 'true',
+    'ngrok-skip-browser-warning': 'true',
     ...(options.headers || {}),
   };
 
