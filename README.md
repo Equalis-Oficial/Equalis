@@ -15,3 +15,5 @@ Reduzir as barreiras enfrentadas por pessoas com deficiência durante a busca po
 - UML
 - Kanban
 - WhatsApp e Discord
+
+##Como Executar?
