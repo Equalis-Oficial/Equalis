@@ -16,4 +16,4 @@ Reduzir as barreiras enfrentadas por pessoas com deficiência durante a busca po
 - Kanban
 - WhatsApp e Discord
 
-##Como Executar?
+## Como Executar?
