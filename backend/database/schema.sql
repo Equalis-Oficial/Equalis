@@ -11,7 +11,7 @@ USE equalis_db;
 -- NÚCLEO OFICIAL DO MER (PÁGINA 11 DO RELATÓRIO PARCIAL)
 -- ====================================================================
 
--- 1. Tabela Empresa
+-- 1. Tabela Empresa (UC-14, RN-002, RN-018, RN-019)
 CREATE TABLE IF NOT EXISTS Empresa (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome_fantasia VARCHAR(100) NOT NULL,
@@ -19,6 +19,10 @@ CREATE TABLE IF NOT EXISTS Empresa (
   email VARCHAR(100) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL,
   descricao TEXT,
+  setor VARCHAR(100) NULL,
+  localizacao VARCHAR(150) NULL,
+  site VARCHAR(255) NULL,
+  telefone VARCHAR(30) NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at DATETIME NULL
@@ -30,12 +34,12 @@ CREATE TABLE IF NOT EXISTS Candidato (
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL,
-  cpf VARCHAR(11) NOT NULL UNIQUE,
+  cpf VARCHAR(11) NULL UNIQUE,
   resumo_profissional TEXT,
   url_curriculo TEXT,
-  cidade VARCHAR(50) DEFAULT 'Guarulhos',
-  estado CHAR(2) DEFAULT 'SP',
-  area_atuacao VARCHAR(100) DEFAULT 'Marketing',
+  cidade VARCHAR(50) DEFAULT '',
+  estado CHAR(2) DEFAULT '',
+  area_atuacao VARCHAR(100) DEFAULT '',
   usa_tela_acessivel TINYINT(1) DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -49,18 +53,19 @@ CREATE TABLE IF NOT EXISTS Deficiencia (
   descricao TEXT
 ) ENGINE=InnoDB;
 
--- 4. Tabela Associativa Candidato_Deficiencia
+-- 4. Tabela Associativa Candidato_Deficiencia (Lei nº 8.213/91 & LBI)
 CREATE TABLE IF NOT EXISTS Candidato_Deficiencia (
   id INT AUTO_INCREMENT PRIMARY KEY,
   candidato_id INT NOT NULL,
   deficiencia_id INT NOT NULL,
+  cid VARCHAR(20) NULL,
   url_laudo_medico TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (candidato_id) REFERENCES Candidato(id) ON DELETE CASCADE,
   FOREIGN KEY (deficiencia_id) REFERENCES Deficiencia(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- 5. Tabela Vaga
+-- 5. Tabela Vaga (RN-026, RN-027 - Acessibilidade Obrigatória)
 CREATE TABLE IF NOT EXISTS Vaga (
   id INT AUTO_INCREMENT PRIMARY KEY,
   empresa_id INT NOT NULL,
@@ -81,7 +86,7 @@ CREATE TABLE IF NOT EXISTS Vaga (
   FOREIGN KEY (empresa_id) REFERENCES Empresa(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- 6. Tabela Associativa Vaga_Acessibilidade
+-- 6. Tabela Associativa Vaga_Acessibilidade (RN-026, RN-027)
 CREATE TABLE IF NOT EXISTS Vaga_Acessibilidade (
   id INT AUTO_INCREMENT PRIMARY KEY,
   vaga_id INT NOT NULL,
@@ -91,7 +96,7 @@ CREATE TABLE IF NOT EXISTS Vaga_Acessibilidade (
   FOREIGN KEY (deficiencia_id) REFERENCES Deficiencia(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- 7. Tabela Candidatura
+-- 7. Tabela Candidatura (Máquina de 4 Estados e Notificação Reativa)
 CREATE TABLE IF NOT EXISTS Candidatura (
   id INT AUTO_INCREMENT PRIMARY KEY,
   candidato_id INT NOT NULL,
@@ -184,4 +189,20 @@ CREATE TABLE IF NOT EXISTS Mensagem (
   horario VARCHAR(20) DEFAULT '10:12',
   nao_lida TINYINT(1) DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- 13. Tabela Notificacao (UC-22 & RN-031 - Central de Notificações Acessível)
+CREATE TABLE IF NOT EXISTS Notificacao (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  usuario_tipo ENUM('CANDIDATO', 'EMPRESA') NOT NULL DEFAULT 'CANDIDATO',
+  tipo_evento VARCHAR(50) NOT NULL DEFAULT 'CANDIDATURA',
+  titulo VARCHAR(150) NOT NULL,
+  mensagem TEXT NOT NULL,
+  referencia_id INT NULL,
+  lida TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_notificacao_usuario (usuario_id),
+  INDEX idx_notificacao_lida (lida),
+  INDEX idx_notificacao_usuario_lida (usuario_id, usuario_tipo, lida)
 ) ENGINE=InnoDB;

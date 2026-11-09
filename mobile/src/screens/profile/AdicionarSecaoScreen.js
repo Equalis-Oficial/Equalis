@@ -15,13 +15,16 @@ import BottomTabBar from '../../components/common/BottomTabBar';
 
 export default function AdicionarSecaoScreen() {
   const { theme, isAccessibleMode, speak } = useAccessibility();
-  const { navigate, goBack } = useAuthAndData();
+  const { navigate, goBack, userType } = useAuthAndData();
   const { colors, typography, radius } = theme;
 
-  const audioSummary =
-    'Menu de adição de seções ao perfil. Escolha entre Adicionar Seção Sobre, Adicionar formação acadêmica, Adicionar cargo ou Editar Perfil.';
+  const isEmpresa = userType === 'EMPRESA';
 
-  const OPTIONS = [
+  const audioSummary = isEmpresa
+    ? 'Menu de seções institucionais da empresa. Escolha entre Adicionar informações da empresa, Adicionar seção sobre a empresa ou Editar Perfil.'
+    : 'Menu de adição de seções ao perfil. Escolha entre Adicionar Seção Sobre, Adicionar formação acadêmica, Adicionar cargo ou Editar Perfil.';
+
+  const CANDIDATO_OPTIONS = [
     {
       id: 'SOBRE',
       title: 'Adicionar seção sobre',
@@ -52,12 +55,38 @@ export default function AdicionarSecaoScreen() {
     },
   ];
 
+  const EMPRESA_OPTIONS = [
+    {
+      id: 'INFO_EMPRESA',
+      title: 'Adicionar informações da empresa',
+      subtitle: 'Setor de atuação, localização, site e canais de contato corporativo.',
+      icon: '🏢',
+      target: 'INFORMACOES_EMPRESA',
+    },
+    {
+      id: 'SOBRE_EMPRESA',
+      title: 'Adicionar seção sobre a empresa',
+      subtitle: 'Apresente a missão inclusiva, cultura e iniciativas corporativas.',
+      icon: '✍️',
+      target: 'SECAO_SOBRE',
+    },
+    {
+      id: 'EDITAR_PERFIL_EMPRESA',
+      title: 'Editar Perfil',
+      subtitle: 'Configurações corporativas, preferências de vagas e privacidade.',
+      icon: '⚙️',
+      target: 'CONFIGURACOES_PERFIL',
+    },
+  ];
+
+  const OPTIONS = isEmpresa ? EMPRESA_OPTIONS : CANDIDATO_OPTIONS;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <AccessibleHeader
-        title="Adicionar ao Perfil"
+        title={isEmpresa ? 'Adicionar à Empresa' : 'Adicionar ao Perfil'}
         showBack={true}
-        onBack={() => goBack('PERFIL_CANDIDATO')}
+        onBack={() => goBack(isEmpresa ? 'CONFIGURACOES_PERFIL' : 'PERFIL_CANDIDATO')}
         audioSummary={audioSummary}
       />
 
@@ -65,7 +94,11 @@ export default function AdicionarSecaoScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         accessible={true}
-        accessibilityLabel="Lista de opções de seções para adicionar ao seu perfil"
+        accessibilityLabel={
+          isEmpresa
+            ? 'Lista de opções para adicionar seções institucionais à sua empresa'
+            : 'Lista de opções de seções para adicionar ao seu perfil'
+        }
       >
         <View style={styles.headerBlock}>
           <Text
@@ -79,7 +112,7 @@ export default function AdicionarSecaoScreen() {
             ]}
             accessibilityRole="header"
           >
-            Configurando o seu perfil
+            {isEmpresa ? 'Configurando a sua empresa' : 'Configurando o seu perfil'}
           </Text>
           <Text
             style={[
@@ -87,7 +120,9 @@ export default function AdicionarSecaoScreen() {
               { color: colors.textMuted, marginTop: 4 },
             ]}
           >
-            Selecione uma categoria abaixo para enriquecer seu currículo e aumentar suas oportunidades no Equalis.
+            {isEmpresa
+              ? 'Selecione uma categoria abaixo para enriquecer o perfil institucional da sua organização e atrair talentos PcD no Equalis.'
+              : 'Selecione uma categoria abaixo para enriquecer seu currículo e aumentar suas oportunidades no Equalis.'}
           </Text>
         </View>
 

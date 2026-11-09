@@ -18,6 +18,7 @@ import BottomTabBar from '../../components/common/BottomTabBar';
 const STATUS_FILTERS = [
   { id: 'TODAS', label: 'Todas' },
   { id: 'ATIVAS', label: 'Ativas' },
+  { id: 'EM_ANALISE', label: 'Em Análise' },
   { id: 'ENTREVISTA', label: 'Entrevistas' },
   { id: 'APROVADA', label: 'Aprovadas' },
   { id: 'CANCELADA', label: 'Canceladas' },
@@ -43,8 +44,16 @@ export default function MinhasCandidaturasScreen() {
 
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('TODAS');
   const [cancelModal, setCancelModal] = useState({ visible: false, vagaId: null, vagaTitulo: '' });
+  const [laudoModal, setLaudoModal] = useState({
+    visible: false,
+    candidatoNome: '',
+    cid: '',
+    deficiencia: '',
+    laudoUrl: '',
+    resumo: '',
+  });
 
-  // Lista enriquecida com os dados da vaga
+  // Lista enriquecida com os dados da vaga e do candidato PcD com laudo CID
   const candidaturasCompletas = useMemo(() => {
     return candidaturas.map((c) => {
       const vagaCorrespondente = vagas.find((v) => v.id === c.vaga_id) || {
@@ -57,9 +66,25 @@ export default function MinhasCandidaturasScreen() {
         modalidade: 'Presencial',
         recursos_acessibilidade: ['Ambiente adaptado PcD'],
       };
+      const candData = c.candidato || {
+        id: c.candidato_id || 1,
+        nome: c.candidato_nome || 'Maria Ledentsova',
+        email: c.candidato_email || 'maria@equalis.com.br',
+        cid: c.cid || 'H54.0',
+        deficiencia_nome: c.deficiencia_nome || 'Deficiência Visual',
+        laudo_medico_url: c.laudo_medico_url || 'laudo_cid_homologado.pdf',
+        resumo_profissional:
+          c.resumo_profissional ||
+          'Profissional de Marketing Digital e Comunicação Acessível com foco em campanhas inclusivas, gestão de mídias sociais e atendimento humanizado.',
+        url_curriculo: c.url_curriculo || 'curriculo_maria.pdf',
+      };
       return {
         ...c,
         vaga: vagaCorrespondente,
+        candidato: candData,
+        cid: c.cid || candData.cid,
+        deficiencia_nome: c.deficiencia_nome || candData.deficiencia_nome,
+        laudo_medico_url: c.laudo_medico_url || candData.laudo_medico_url,
       };
     });
   }, [candidaturas, vagas]);
@@ -79,6 +104,9 @@ export default function MinhasCandidaturasScreen() {
       if (selectedStatusFilter === 'TODAS') return true;
       if (selectedStatusFilter === 'ATIVAS') {
         return item.status_processo !== 'CANCELADA';
+      }
+      if (selectedStatusFilter === 'EM_ANALISE') {
+        return item.status_processo === 'EM ANÁLISE' || item.status_processo === 'ENVIADA';
       }
       if (selectedStatusFilter === 'ENTREVISTA') {
         return item.status_processo === 'ENTREVISTA AGENDADA';
@@ -115,6 +143,27 @@ export default function MinhasCandidaturasScreen() {
   const handleVerVaga = (vagaId) => {
     setSelectedVagaId(vagaId);
     navigate(isAccessibleMode ? 'DETALHES_VAGA_ACESSIVEL' : 'DETALHES_VAGA', { vagaId });
+  };
+
+  const handleConsultarLaudo = (item) => {
+    const cand = item.candidato || {};
+    const nome = cand.nome || item.candidato_nome || 'Maria Ledentsova';
+    const cidCod = cand.cid || item.cid || 'H54.0';
+    const def = cand.deficiencia_nome || item.deficiencia_nome || 'Deficiência Visual';
+    const url = cand.laudo_medico_url || item.laudo_medico_url || 'laudo_cid_homologado.pdf';
+    const resumo = cand.resumo_profissional || item.resumo_profissional || '';
+
+    setLaudoModal({
+      visible: true,
+      candidatoNome: nome,
+      cid: cidCod,
+      deficiencia: def,
+      laudoUrl: url,
+      resumo: resumo,
+    });
+    speak(
+      `Laudo médico pericial homologado da Lei de Cotas número 8.213/91 para o candidato ${nome}, código CID-10 ${cidCod}, deficiência ${def}.`
+    );
   };
 
   const handleConfirmarCancelamento = () => {
@@ -369,45 +418,154 @@ export default function MinhasCandidaturasScreen() {
                 {/* Linha de Ações: Empresa vs Candidato */}
                 {isEmpresa ? (
                   <View style={styles.empresaActionsContainer}>
-                    <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 8 }]}>
-                      Candidato inscrito:{' '}
-                      <Text style={{ fontWeight: '700', color: colors.primaryDark }}>
-                        {item.candidato?.nome || 'Candidato PcD'}
-                      </Text>{' '}
-                      • Laudo CID Homologado (Lei nº 8.213/91)
+                    {/* Header do Candidato com Selo Oficial da Lei nº 8.213/91 */}
+                    <View style={styles.candidatoHeaderRow}>
+                      <View style={{ flex: 1, marginRight: 8 }}>
+                        <Text style={[typography.titleSmall, { color: colors.textPrimary, fontWeight: '700' }]}>
+                          👤 {item.candidato?.nome || 'Candidato PcD'}
+                        </Text>
+                        <Text style={[typography.caption, { color: colors.textMuted }]}>
+                          ✉️ {item.candidato?.email || 'contato@candidato.com.br'}
+                        </Text>
+                      </View>
+                      <View style={[styles.seloCotaBadge, { backgroundColor: '#DCFCE7', borderColor: '#16A34A' }]}>
+                        <Text style={[typography.caption, { color: '#15803D', fontWeight: '700', fontSize: 11 }]}>
+                          ⚖️ Lei nº 8.213/91 (Laudo Homologado)
+                        </Text>
+                      </View>
+                    </View>
+
+                    {/* Dados Médicos com CID-10 e Categoria PcD */}
+                    <View style={[styles.dadosMedicosBox, { backgroundColor: colors.surfaceTint, borderColor: colors.cardBorder }]}>
+                      <Text style={[typography.caption, { color: colors.textPrimary, fontWeight: '600' }]}>
+                        CID-10: <Text style={{ color: colors.primaryDark, fontWeight: '700' }}>{item.candidato?.cid || item.cid || 'H54.0'}</Text>
+                        {'   '}•{'   '}
+                        Deficiência: <Text style={{ color: colors.primaryDark, fontWeight: '700' }}>{item.candidato?.deficiencia_nome || item.deficiencia_nome || 'Deficiência Visual'}</Text>
+                      </Text>
+
+                      {item.candidato?.resumo_profissional ? (
+                        <Text
+                          style={[typography.caption, { color: colors.textSecondary, marginTop: 4, lineHeight: 16 }]}
+                          numberOfLines={2}
+                        >
+                          📝 {item.candidato.resumo_profissional}
+                        </Text>
+                      ) : null}
+
+                      {/* Botão para Consulta do Laudo Pericial Homologado */}
+                      <TouchableOpacity
+                        onPress={() => handleConsultarLaudo(item)}
+                        style={[styles.consultarLaudoBtn, { borderColor: colors.primaryDark }]}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Consultar laudo médico pericial de ${item.candidato?.nome || 'Candidato'}`}
+                        accessibilityHint="Toque duas vezes para visualizar o laudo homologado para a cota de PcD"
+                      >
+                        <Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>
+                          📋 Consultar Laudo Médico Homologado
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Máquina de Estados com os 4 Status Canônicos */}
+                    <Text style={[typography.caption, { color: colors.textMuted, marginTop: 4, marginBottom: 6, fontWeight: '600' }]}>
+                      Atualizar Status do Processo Seletivo:
                     </Text>
                     <View style={styles.empresaBtnRow}>
+                      {/* 1. EM ANÁLISE */}
+                      <TouchableOpacity
+                        onPress={() => {
+                          const nome = item.candidato?.nome || 'Candidato PcD';
+                          atualizarStatusCandidatura(item.id, 'EM ANÁLISE');
+                          speak(`Candidatura de ${nome} colocada Em Análise.`);
+                        }}
+                        style={[
+                          styles.empresaActionBtn,
+                          {
+                            backgroundColor: '#F59E0B',
+                            borderWidth: item.status_processo === 'EM ANÁLISE' || item.status_processo === 'ENVIADA' ? 2 : 0,
+                            borderColor: '#78350F',
+                          },
+                        ]}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityLabel="Colocar candidatura em análise"
+                      >
+                        <Text style={styles.empresaBtnText}>
+                          ⏳ Em Análise {item.status_processo === 'EM ANÁLISE' || item.status_processo === 'ENVIADA' ? '✓' : ''}
+                        </Text>
+                      </TouchableOpacity>
+
+                      {/* 2. ENTREVISTA AGENDADA */}
                       <TouchableOpacity
                         onPress={() => {
                           const nome = item.candidato?.nome || 'Candidato PcD';
                           atualizarStatusCandidatura(item.id, 'ENTREVISTA AGENDADA');
                           speak(`Entrevista agendada com o candidato ${nome}!`);
                         }}
-                        style={[styles.empresaActionBtn, { backgroundColor: '#8B5CF6' }]}
+                        style={[
+                          styles.empresaActionBtn,
+                          {
+                            backgroundColor: '#8B5CF6',
+                            borderWidth: item.status_processo === 'ENTREVISTA AGENDADA' ? 2 : 0,
+                            borderColor: '#4C1D95',
+                          },
+                        ]}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityLabel="Agendar entrevista com o candidato"
                       >
-                        <Text style={styles.empresaBtnText}>📅 Agendar Entrevista</Text>
+                        <Text style={styles.empresaBtnText}>
+                          📅 Entrevista {item.status_processo === 'ENTREVISTA AGENDADA' ? '✓' : ''}
+                        </Text>
                       </TouchableOpacity>
 
+                      {/* 3. APROVADA */}
                       <TouchableOpacity
                         onPress={() => {
                           const nome = item.candidato?.nome || 'Candidato PcD';
                           atualizarStatusCandidatura(item.id, 'APROVADA');
                           speak(`Candidatura de ${nome} aprovada com sucesso!`);
                         }}
-                        style={[styles.empresaActionBtn, { backgroundColor: '#10B981' }]}
+                        style={[
+                          styles.empresaActionBtn,
+                          {
+                            backgroundColor: '#10B981',
+                            borderWidth: item.status_processo === 'APROVADA' ? 2 : 0,
+                            borderColor: '#064E3B',
+                          },
+                        ]}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityLabel="Aprovar candidato no processo seletivo"
                       >
-                        <Text style={styles.empresaBtnText}>✅ Aprovar</Text>
+                        <Text style={styles.empresaBtnText}>
+                          ✅ Aprovar {item.status_processo === 'APROVADA' ? '✓' : ''}
+                        </Text>
                       </TouchableOpacity>
 
+                      {/* 4. CANCELADA */}
                       <TouchableOpacity
                         onPress={() => {
                           const nome = item.candidato?.nome || 'Candidato PcD';
                           atualizarStatusCandidatura(item.id, 'CANCELADA');
-                          speak(`Candidatura de ${nome} recusada.`);
+                          speak(`Candidatura de ${nome} cancelada.`);
                         }}
-                        style={[styles.empresaActionBtn, { backgroundColor: colors.danger }]}
+                        style={[
+                          styles.empresaActionBtn,
+                          {
+                            backgroundColor: colors.danger || '#EF4444',
+                            borderWidth: item.status_processo === 'CANCELADA' ? 2 : 0,
+                            borderColor: '#7F1D1D',
+                          },
+                        ]}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityLabel="Recusar ou cancelar candidatura"
                       >
-                        <Text style={styles.empresaBtnText}>✕ Recusar</Text>
+                        <Text style={styles.empresaBtnText}>
+                          ✕ Cancelar {item.status_processo === 'CANCELADA' ? '✓' : ''}
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -501,6 +659,60 @@ export default function MinhasCandidaturasScreen() {
         </View>
       </Modal>
 
+      {/* MODAL DE CONSULTA DE LAUDO MÉDICO HOMOLOGADO (LEI Nº 8.213/91) */}
+      <Modal
+        visible={laudoModal.visible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() =>
+          setLaudoModal({ visible: false, candidatoNome: '', cid: '', deficiencia: '', laudoUrl: '', resumo: '' })
+        }
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalBox, { backgroundColor: '#FFFFFF', borderRadius: radius.lg, maxWidth: 380 }]}>
+            <Text style={styles.modalEmoji}>⚖️</Text>
+            <Text style={[typography.titleMedium, { color: colors.textPrimary, textAlign: 'center', fontWeight: '700' }]}>
+              Laudo Médico Pericial Homologado
+            </Text>
+            <Text style={[typography.caption, { color: '#15803D', textAlign: 'center', fontWeight: '700', marginTop: 2, marginBottom: 12 }]}>
+              Selo Oficial • Lei Federal nº 8.213/91 (Lei de Cotas)
+            </Text>
+
+            <View style={{ backgroundColor: '#F8FAFC', borderColor: '#E2E8F0', borderWidth: 1, padding: 12, borderRadius: 8, marginBottom: 16 }}>
+              <Text style={[typography.bodyMedium, { color: colors.textPrimary, marginBottom: 6 }]}>
+                <Text style={{ fontWeight: '700' }}>Candidato:</Text> {laudoModal.candidatoNome}
+              </Text>
+              <Text style={[typography.bodyMedium, { color: colors.textPrimary, marginBottom: 6 }]}>
+                <Text style={{ fontWeight: '700' }}>Código CID-10:</Text> {laudoModal.cid}
+              </Text>
+              <Text style={[typography.bodyMedium, { color: colors.textPrimary, marginBottom: 6 }]}>
+                <Text style={{ fontWeight: '700' }}>Deficiência:</Text> {laudoModal.deficiencia}
+              </Text>
+              <Text style={[typography.bodyMedium, { color: colors.textPrimary, marginBottom: 6 }]}>
+                <Text style={{ fontWeight: '700' }}>Documento Anexo:</Text> {laudoModal.laudoUrl}
+              </Text>
+              {laudoModal.resumo ? (
+                <Text style={[typography.bodySmall, { color: colors.textSecondary, marginTop: 4, fontStyle: 'italic' }]}>
+                  "{laudoModal.resumo}"
+                </Text>
+              ) : null}
+            </View>
+
+            <TouchableOpacity
+              onPress={() =>
+                setLaudoModal({ visible: false, candidatoNome: '', cid: '', deficiencia: '', laudoUrl: '', resumo: '' })
+              }
+              style={[styles.modalBtnCancel, { backgroundColor: colors.primaryDark, borderColor: colors.primaryDark, width: '100%' }]}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Fechar modal de laudo médico"
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '700', textAlign: 'center' }}>Fechar Consulta</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* RODAPÉ TAB BAR INTEGRADO */}
       <BottomTabBar activeTab="NOTIFICACOES" />
     </View>
@@ -510,6 +722,35 @@ export default function MinhasCandidaturasScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  candidatoHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  seloCotaBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  dadosMedicosBox: {
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  consultarLaudoBtn: {
+    marginTop: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
   },
   empresaActionsContainer: {
     marginTop: 10,

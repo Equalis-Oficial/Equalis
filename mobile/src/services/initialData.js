@@ -125,6 +125,22 @@ export const MARIA_CANDIDATURAS = [
     vaga_id: 3,
     status_processo: 'EM ANÁLISE',
     created_at: '18/10/2026',
+    candidato_nome: 'Maria Ledentsova',
+    candidato_email: 'maria@equalis.com.br',
+    cid: 'H54.0',
+    deficiencia_nome: 'Deficiência Visual',
+    laudo_medico_url: 'laudo_cid_homologado.pdf',
+    candidato: {
+      id: 1,
+      nome: 'Maria Ledentsova',
+      email: 'maria@equalis.com.br',
+      cid: 'H54.0',
+      deficiencia_nome: 'Deficiência Visual',
+      laudo_medico_url: 'laudo_cid_homologado.pdf',
+      resumo_profissional:
+        'Profissional de Marketing Digital e Comunicação Acessível com foco em campanhas inclusivas, gestão de mídias sociais e atendimento humanizado.',
+      url_curriculo: 'curriculo_maria.pdf',
+    },
   },
 ];
 
@@ -132,10 +148,15 @@ export const DEFAULT_EMPRESA = {
   id: 1,
   nome_fantasia: 'Centro Universitário UNICEPLAC',
   cnpj: '00.394.460/0058-87',
+  email: 'contato@uniceplac.edu.br',
+  setor: 'Ensino Superior e Saúde',
   area_atuacao: 'Ensino Superior e Saúde',
+  localizacao: 'Gama - DF',
   cidade: 'Gama',
   estado: 'DF',
   pais: 'Brasil',
+  site: 'https://www.uniceplac.edu.br',
+  telefone: '(61) 3035-3900',
   descricao:
     'Instituição com mais de 50 anos de excelência no DF, pioneira na inclusão acadêmica e corporativa de pessoas com deficiência.',
   recursos_acessibilidade: [
@@ -152,6 +173,10 @@ export const EMPTY_EMPRESA = {
   nome_fantasia: '',
   cnpj: '',
   email: '',
+  setor: '',
+  localizacao: '',
+  site: '',
+  telefone: '',
   descricao: '',
   area_atuacao: '',
   cidade: '',
@@ -163,4 +188,58 @@ export const EMPTY_EMPRESA = {
 export const INITIAL_CONEXOES = [];
 export const INITIAL_PUBLICACOES = [];
 export const INITIAL_MENSAGENS = [];
+
+export const INITIAL_NOTIFICACOES = [
+  {
+    id: 1,
+    usuario_id: 1,
+    usuario_tipo: 'CANDIDATO',
+    tipo_evento: 'CANDIDATURA',
+    tipo: 'CANDIDATURA',
+    titulo: 'Candidatura em Análise',
+    mensagem: 'A empresa Centro Universitário UNICEPLAC iniciou a triagem da sua candidatura para vaga inclusiva.',
+    referencia_id: 1,
+    lida: 0,
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+  },
+  {
+    id: 2,
+    usuario_id: 1,
+    usuario_tipo: 'CANDIDATO',
+    tipo_evento: 'CONVITE',
+    tipo: 'CONVITE',
+    titulo: 'Entrevista Agendada!',
+    mensagem: 'Você foi selecionado para uma entrevista inclusiva na Inclusiva Tech Brasil.',
+    referencia_id: 2,
+    lida: 0,
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    id: 3,
+    usuario_id: 1,
+    usuario_tipo: 'CANDIDATO',
+    tipo_evento: 'MENSAGEM',
+    tipo: 'MENSAGEM',
+    titulo: 'Nova Mensagem de Recrutador',
+    mensagem: 'Olá Maria, recebemos seu laudo médico homologado com sucesso no portal.',
+    referencia_id: 1,
+    lida: 0,
+    created_at: new Date(Date.now() - 1800000).toISOString(),
+  },
+  {
+    id: 4,
+    usuario_id: 1,
+    usuario_tipo: 'CANDIDATO',
+    tipo_evento: 'SISTEMA',
+    tipo: 'SISTEMA',
+    titulo: 'Perfil Inclusivo Completo',
+    mensagem: 'Parabéns! Suas competências e recursos de acessibilidade foram atualizados no Equalis.',
+    referencia_id: 1,
+    lida: 1,
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+];
+
+export const DEFAULT_NOTIFICACOES = INITIAL_NOTIFICACOES;
+
 

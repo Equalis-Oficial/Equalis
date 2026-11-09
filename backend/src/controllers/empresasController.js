@@ -26,7 +26,9 @@ async function atualizarPerfil(req, res, next) {
   try {
     const empresaAtualizada = await empresaService.atualizarPerfil(req.params.id, req.body);
     return res.status(200).json({
+      success: true,
       sucesso: true,
+      message: 'Perfil da empresa atualizado com sucesso.',
       empresa: empresaAtualizada,
     });
   } catch (err) {

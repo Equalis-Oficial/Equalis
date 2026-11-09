@@ -24,6 +24,7 @@ const candidaturasRoutes = require('./routes/candidaturasRoutes');
 const publicacoesRoutes = require('./routes/publicacoesRoutes');
 const redeRoutes = require('./routes/redeRoutes');
 const deficienciasRoutes = require('./routes/deficienciasRoutes');
+const notificacoesRoutes = require('./routes/notificacoesRoutes');
 
 const candidatosController = require('./controllers/candidatosController');
 
@@ -64,6 +65,7 @@ app.get('/api/health', (req, res) => {
       'Publicacao',
       'Conexao',
       'Mensagem',
+      'Notificacao',
     ],
   });
 });
@@ -101,6 +103,7 @@ app.use('/api/vagas', vagasRoutes);
 app.use('/api/candidaturas', candidaturasRoutes);
 app.use('/api/publicacoes', publicacoesRoutes);
 app.use('/api/deficiencias', deficienciasRoutes);
+app.use('/api/notificacoes', notificacoesRoutes);
 app.use('/api', redeRoutes);
 
 // Rotas de atalho para compatibilidade

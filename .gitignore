@@ -46,3 +46,7 @@ Thumbs.db
 doc/
 ref/
 
+
+# Agentes e logs internos de automacao
+.agents/
+

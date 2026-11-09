@@ -30,7 +30,8 @@ async function cadastrar({
   if (!nome || String(nome).trim().length < 3) {
     throw new AppError('Informe o nome completo do candidato.', 400);
   }
-  if (!validarCPF(cpf)) {
+  const cpfLimpoInput = limparDigitos(cpf || '');
+  if (cpfLimpoInput && !validarCPF(cpf)) {
     throw new AppError('CPF inválido pelos dígitos verificadores.', 400);
   }
   if (!validarEmail(email)) {
@@ -44,7 +45,7 @@ async function cadastrar({
     throw new AppError('A confirmação de senha não confere.', 400);
   }
 
-  const cpfLimpo = limparDigitos(cpf);
+  const cpfLimpo = cpfLimpoInput || null;
   const emailNorm = String(email).trim().toLowerCase();
 
   const existeEmail = await candidatoRepository.buscarPorEmail(emailNorm);
@@ -52,9 +53,11 @@ async function cadastrar({
     throw new AppError('Já existe um candidato cadastrado com este e-mail.', 409);
   }
 
-  const existeCpf = await candidatoRepository.buscarPorCpf(cpfLimpo);
-  if (existeCpf) {
-    throw new AppError('Já existe um candidato cadastrado com este CPF.', 409);
+  if (cpfLimpo) {
+    const existeCpf = await candidatoRepository.buscarPorCpf(cpfLimpo);
+    if (existeCpf) {
+      throw new AppError('Já existe um candidato cadastrado com este CPF.', 409);
+    }
   }
 
   const senhaHash = hashSenha(senha);
@@ -64,9 +67,9 @@ async function cadastrar({
     senha: senhaHash,
     cpf: cpfLimpo,
     resumo_profissional: resumo_profissional ? sanitizarTexto(resumo_profissional) : null,
-    cidade: cidade ? sanitizarTexto(cidade) : 'Guarulhos',
-    estado: estado || 'SP',
-    area_atuacao: area_atuacao ? sanitizarTexto(area_atuacao) : 'Geral',
+    cidade: cidade ? sanitizarTexto(cidade) : '',
+    estado: estado || '',
+    area_atuacao: area_atuacao ? sanitizarTexto(area_atuacao) : '',
     usa_tela_acessivel: Boolean(usa_tela_acessivel),
   });
 

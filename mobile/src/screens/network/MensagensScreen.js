@@ -25,6 +25,16 @@ export default function MensagensScreen() {
   const [respostaTexto, setRespostaTexto] = useState('');
   const [chatModalVisible, setChatModalVisible] = useState(false);
 
+  React.useEffect(() => {
+    if (Array.isArray(mensagens) && marcarMensagemComoLida) {
+      mensagens.forEach((m) => {
+        if (m.nao_lida) {
+          marcarMensagemComoLida(m.id);
+        }
+      });
+    }
+  }, [mensagens, marcarMensagemComoLida]);
+
   const handleOpenConversation = (conversa) => {
     setSelectedConversation(conversa);
     setChatModalVisible(true);

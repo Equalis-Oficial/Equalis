@@ -75,9 +75,7 @@ export default function RegistroCandidatoScreen() {
       novosErros.email = 'E-mail inválido. Utilize o formato seuemail@dominio.com.';
     }
 
-    if (!cpf.trim()) {
-      novosErros.cpf = 'Informe seu CPF.';
-    } else if (!validarCPF(cpf)) {
+    if (cpf.trim() && !validarCPF(cpf)) {
       novosErros.cpf = 'CPF inválido. Verifique os números digitados.';
     }
 
@@ -217,15 +215,15 @@ export default function RegistroCandidatoScreen() {
           />
 
           <AccessibleInput
-            label="CPF"
+            label="CPF (Opcional)"
             value={cpf}
             onChangeText={handleCpfChange}
             placeholder="000.000.000-00"
             keyboardType="numeric"
             maxLength={14}
-            required={true}
+            required={false}
             error={erros.cpf}
-            accessibilityHint="Digite os 11 dígitos do seu CPF"
+            accessibilityHint="Digite os 11 dígitos do seu CPF (opcional)"
           />
 
           <AccessibleInput

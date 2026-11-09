@@ -44,6 +44,7 @@ import TelaAcessivelScreen from './src/screens/accessible/TelaAcessivelScreen';
 import EmpregoScreen from './src/screens/jobs/EmpregoScreen';
 import DetalhesVagaScreen from './src/screens/jobs/DetalhesVagaScreen';
 import DetalhesVagaAcessivelScreen from './src/screens/accessible/DetalhesVagaAcessivelScreen';
+import PublicarPostAcessivelScreen from './src/screens/accessible/PublicarPostAcessivelScreen';
 import PublicarVagaScreen from './src/screens/jobs/PublicarVagaScreen';
 import MinhasCandidaturasScreen from './src/screens/jobs/MinhasCandidaturasScreen';
 
@@ -58,6 +59,7 @@ import CargoScreen from './src/screens/profile/CargoScreen';
 import AdicionarCargoScreen from './src/screens/profile/AdicionarCargoScreen';
 import EditarPerfilScreen from './src/screens/profile/EditarPerfilScreen';
 import ConfiguracoesPerfilScreen from './src/screens/profile/ConfiguracoesPerfilScreen';
+import InformacoesEmpresaScreen from './src/screens/profile/InformacoesEmpresaScreen';
 import RedeScreen from './src/screens/network/RedeScreen';
 import PublicarPostScreen from './src/screens/network/PublicarPostScreen';
 import CriarPublicacaoScreen from './src/screens/network/CriarPublicacaoScreen';
@@ -66,6 +68,7 @@ import EditarPublicacaoScreen from './src/screens/network/EditarPublicacaoScreen
 import OpcoesPublicacaoScreen from './src/screens/network/OpcoesPublicacaoScreen';
 import ConfirmarExclusaoScreen from './src/screens/network/ConfirmarExclusaoScreen';
 import MensagensScreen from './src/screens/network/MensagensScreen';
+import NotificacoesScreen from './src/screens/network/NotificacoesScreen';
 
 const PUBLIC_SCREENS = [
   'TELA_INICIAL',
@@ -80,7 +83,7 @@ const PUBLIC_SCREENS = [
 
 function ScreenRouter() {
   const { currentScreen, sessionToken } = useAuthAndData();
-  const { theme } = useAccessibility();
+  const { theme, isAccessibleMode } = useAccessibility();
 
   // Route Guard: telas privadas requerem autenticação legítima (sessionToken)
   const isPublicScreen = PUBLIC_SCREENS.includes(currentScreen);
@@ -129,6 +132,8 @@ function ScreenRouter() {
         return <PerfilCandidatoScreen />;
       case 'CONFIGURACOES_PERFIL':
         return <ConfiguracoesPerfilScreen />;
+      case 'INFORMACOES_EMPRESA':
+        return <InformacoesEmpresaScreen />;
       case 'ADICIONAR_SECAO':
         return <AdicionarSecaoScreen />;
       case 'SECAO_SOBRE':
@@ -145,8 +150,11 @@ function ScreenRouter() {
         return <EditarPerfilScreen />;
       case 'REDE':
         return <RedeScreen />;
+      case 'PUBLICAR_POST_ACESSIVEL':
+      case 'PUBLICAR_ACESSIVEL':
+        return <PublicarPostAcessivelScreen />;
       case 'PUBLICAR':
-        return <PublicarPostScreen />;
+        return isAccessibleMode ? <PublicarPostAcessivelScreen /> : <PublicarPostScreen />;
       case 'CRIAR_PUBLICACAO':
         return <CriarPublicacaoScreen />;
       case 'VER_PUBLICACOES':
@@ -158,7 +166,10 @@ function ScreenRouter() {
       case 'CONFIRMAR_EXCLUSAO':
         return <ConfirmarExclusaoScreen />;
       case 'MENSAGENS':
+      case 'CHAT':
         return <MensagensScreen />;
+      case 'NOTIFICACOES':
+        return <NotificacoesScreen />;
 
       default:
         return <TelaInicialScreen />;

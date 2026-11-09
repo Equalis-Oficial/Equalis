@@ -18,6 +18,7 @@ import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 import AccessibleCheckbox from '../../components/common/AccessibleCheckbox';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
 import BottomTabBar from '../../components/common/BottomTabBar';
+import { MENSAGENS } from '../../utils/validators';
 
 const DEFAULT_RECURSOS = [
   'Rampas e Elevador Acessível',
@@ -57,9 +58,18 @@ export default function PublicarVagaScreen() {
   const [sucessoModal, setSucessoModal] = useState(false);
 
   const toggleDisability = (id) => {
-    setSelectedDisabilities((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setSelectedDisabilities((prev) => {
+      const updated = prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
+      if (updated.length > 0) {
+        setErrors((prevErr) => {
+          const { acessibilidade: _, ...rest } = prevErr;
+          return rest;
+        });
+      }
+      return updated;
+    });
   };
 
   const toggleRecurso = (recurso) => {
@@ -83,9 +93,14 @@ export default function PublicarVagaScreen() {
     if (!requerimentos.trim()) novosErros.requerimentos = 'Informe os requerimentos.';
     if (!salario.trim()) novosErros.salario = 'Informe a remuneração.';
 
+    // RN-026 e RN-027: Acessibilidade é campo obrigatório no anúncio de vagas
+    if (!selectedDisabilities || selectedDisabilities.length === 0) {
+      novosErros.acessibilidade = MENSAGENS.MSG_020;
+    }
+
     if (Object.keys(novosErros).length > 0) {
       setErrors(novosErros);
-      speak('Atenção: Por favor preencha todos os campos obrigatórios marcados com asterisco.');
+      speak(`Atenção: ${MENSAGENS.MSG_020}`);
       return;
     }
 
@@ -97,9 +112,12 @@ export default function PublicarVagaScreen() {
     const estado = parts[1]?.trim() || 'DF';
 
     const dadosVaga = {
+      empresa_id: empresaPerfil?.id || 1,
       empresa_nome: empresaPerfil?.nome_fantasia || 'Empresa Inclusiva',
+      cargo,
       titulo: cargo,
       descricao,
+      localEmpresa,
       requerimentos,
       modalidade: modalidade || 'Presencial',
       cidade,
@@ -421,16 +439,40 @@ export default function PublicarVagaScreen() {
         </View>
 
         {/* SEÇÃO: DEFICIÊNCIAS ATENDIDAS (VAGA_ACESSIBILIDADE - MER PÁG. 11) */}
-        <View style={styles.sectionWrap}>
+        <View
+          style={[
+            styles.sectionWrap,
+            errors.acessibilidade
+              ? {
+                  borderColor: colors.danger || '#D32F2F',
+                  borderWidth: 1.5,
+                  borderRadius: radius.md,
+                  padding: 10,
+                }
+              : null,
+          ]}
+        >
           <Text
             accessibilityRole="header"
             style={[typography.titleMedium, styles.sectionSubHeading, { color: colors.textPrimary }]}
           >
-            ♿ Deficiências Atendidas pela Vaga:
+            ♿ Deficiências Atendidas pela Vaga * :
           </Text>
           <Text style={[typography.caption, { color: colors.textMuted, marginBottom: 10 }]}>
-            Marque os perfis de PcD para os quais o posto e o ambiente já estão preparados:
+            Marque os perfis de PcD para os quais o posto e o ambiente já estão preparados (obrigatório per RN-026/027):
           </Text>
+
+          {errors.acessibilidade ? (
+            <Text
+              style={[
+                typography.caption,
+                { color: colors.danger || '#D32F2F', fontWeight: '700', marginBottom: 10 },
+              ]}
+              accessibilityRole="alert"
+            >
+              ⚠️ {errors.acessibilidade}
+            </Text>
+          ) : null}
 
           {deficiencias.map((def) => {
             const isChecked = selectedDisabilities.includes(def.id);

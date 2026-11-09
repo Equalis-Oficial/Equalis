@@ -116,6 +116,52 @@ export default function CriarPublicacaoScreen() {
         accessible={true}
         accessibilityLabel="Tela de criação de nova publicação"
       >
+        {/* Banner / Atalho para Publicação Acessível Dedicada (Milestone 4 - Figma #371:561 / #371:532) */}
+        <View
+          style={{
+            backgroundColor: isAccessibleMode ? colors.surfaceTint : '#F0F7FF',
+            borderWidth: 1.5,
+            borderColor: colors.primaryDark || '#1F41BB',
+            borderRadius: radius.md,
+            padding: 12,
+            marginBottom: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Text style={{ fontSize: 26, marginRight: 10 }}>♿</Text>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={[typography.labelMedium, { color: colors.primaryDark, fontWeight: '800' }]}>
+              {isAccessibleMode ? 'Modo Tela Acessível Ativo' : 'Prefere interface acessível?'}
+            </Text>
+            <Text style={[typography.caption, { color: colors.textSecondary }]}>
+              {isAccessibleMode
+                ? 'Utilize o Hub Acessível dedicado com botões ampliados e audiodescrição.'
+                : 'Publique com fonte grande, alto contraste e guia por voz assistivo.'}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              speak('Abrindo tela acessível de publicação.');
+              navigate('PUBLICAR_POST_ACESSIVEL', { initialView: 'EDITOR' });
+            }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Alternar para tela de publicação acessível simplificada"
+            style={{
+              backgroundColor: colors.primaryDark,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: radius.sm,
+            }}
+          >
+            <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
+              {isAccessibleMode ? 'Abrir Hub' : 'Alternar'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {/* MODO ACESSÍVEL (#371:561 e 34_CRIAR_PUBLICACAO_ACESSIVEL.png) */}
         {isAccessibleMode ? (
           <View style={styles.accessibleWrapper}>

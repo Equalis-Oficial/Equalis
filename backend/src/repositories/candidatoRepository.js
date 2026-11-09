@@ -51,9 +51,9 @@ async function criar({ nome, email, senha, cpf, resumo_profissional, url_curricu
       cpf,
       resumo_profissional || null,
       url_curriculo || null,
-      cidade || 'Guarulhos',
-      estado || 'SP',
-      area_atuacao || 'Geral',
+      cidade || '',
+      estado || '',
+      area_atuacao || '',
       usa_tela_acessivel ? 1 : 0,
     ]
   );

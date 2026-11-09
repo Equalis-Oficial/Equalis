@@ -28,8 +28,11 @@ async function atualizarStatus(req, res, next) {
   try {
     const resultado = await candidaturaService.atualizarStatus(req.params.id, req.body);
     return res.status(200).json({
+      success: true,
       sucesso: true,
       status_processo: resultado.status_processo,
+      message: 'Status do processo seletivo atualizado com sucesso.',
+      notificacao_gerada: Boolean(resultado.notificacao_gerada),
     });
   } catch (err) {
     next(err);

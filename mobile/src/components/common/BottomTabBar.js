@@ -7,7 +7,7 @@ const TABS_CANDIDATO = [
   { id: 'HOME', label: 'Início', icon: '🏠', target: 'HOME' },
   { id: 'REDE', label: 'Rede', icon: '👥', target: 'REDE' },
   { id: 'PUBLICAR', label: 'Publicar', icon: '🖼️', target: 'CRIAR_PUBLICACAO' },
-  { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'MINHAS_CANDIDATURAS' },
+  { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'NOTIFICACOES' },
   { id: 'VAGAS', label: 'Vagas', icon: '💼', target: 'EMPREGO' },
 ];
 
@@ -15,13 +15,13 @@ const TABS_EMPRESA = [
   { id: 'HOME', label: 'Feed', icon: '🏠', target: 'HOME' },
   { id: 'VAGAS', label: 'Vagas', icon: '💼', target: 'EMPREGO' },
   { id: 'PUBLICAR', label: '+ Criar Vaga', icon: '➕', target: 'PUBLICAR_VAGA_EMPRESA' },
-  { id: 'NOTIFICACOES', label: 'Inscrições', icon: '📋', target: 'MINHAS_CANDIDATURAS' },
+  { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'NOTIFICACOES' },
   { id: 'PERFIL', label: 'Empresa', icon: '🏢', target: 'PERFIL_CANDIDATO' },
 ];
 
 export default function BottomTabBar({ activeTab = 'HOME' }) {
   const { theme, isAccessibleMode } = useAccessibility();
-  const { navigate, userType } = useAuthAndData();
+  const { navigate, userType, notificacoesNaoLidasCount } = useAuthAndData();
   const { colors, typography } = theme;
 
   const currentTabs = userType === 'EMPRESA' ? TABS_EMPRESA : TABS_CANDIDATO;
@@ -66,13 +66,19 @@ export default function BottomTabBar({ activeTab = 'HOME' }) {
     >
       {currentTabs.map((tab) => {
         const isSelected = activeTab === tab.id;
+        const isNotifTab = tab.id === 'NOTIFICACOES';
+        const badgeCount = isNotifTab ? Number(notificacoesNaoLidasCount) || 0 : 0;
+        const showBadge = badgeCount > 0;
+        const badgeDisplay = badgeCount > 99 ? '99+' : String(badgeCount);
+        const accessibilityLabel = `Aba ${tab.label}${badgeCount > 0 ? `, ${badgeCount} não lidas` : ''}`;
+
         return (
           <TouchableOpacity
             key={tab.id}
             onPress={() => navigate(tab.target)}
             accessible={true}
             accessibilityRole="tab"
-            accessibilityLabel={`Aba ${tab.label}`}
+            accessibilityLabel={accessibilityLabel}
             accessibilityState={{ selected: isSelected }}
             style={styles.tabItem}
           >
@@ -81,7 +87,26 @@ export default function BottomTabBar({ activeTab = 'HOME' }) {
                 style={[styles.activeTopLine, { backgroundColor: colors.primary }]}
               />
             ) : null}
-            <Text style={styles.tabIcon}>{tab.icon}</Text>
+
+            <View style={styles.iconContainer}>
+              <Text style={styles.tabIcon}>{tab.icon}</Text>
+              {showBadge ? (
+                <View
+                  style={[
+                    styles.badge,
+                    {
+                      backgroundColor: colors.danger || '#D93025',
+                      borderColor: colors.background || '#FFFFFF',
+                    },
+                  ]}
+                  accessible={false}
+                  importantForAccessibility="no"
+                >
+                  <Text style={styles.badgeText}>{badgeDisplay}</Text>
+                </View>
+              ) : null}
+            </View>
+
             <Text
               style={[
                 typography.caption,
@@ -128,9 +153,34 @@ const styles = StyleSheet.create({
     height: 3.5,
     borderRadius: 2,
   },
+  iconContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   tabIcon: {
     fontSize: 20,
     marginBottom: 2,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -10,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    textAlign: 'center',
+    includeFontPadding: false,
+    lineHeight: 12,
   },
   accessibleFooter: {
     paddingHorizontal: 16,

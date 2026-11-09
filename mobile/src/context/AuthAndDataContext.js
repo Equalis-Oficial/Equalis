@@ -18,6 +18,8 @@ import {
   INITIAL_CONEXOES,
   INITIAL_PUBLICACOES,
   INITIAL_MENSAGENS,
+  INITIAL_NOTIFICACOES,
+  DEFAULT_NOTIFICACOES,
 } from '../services/initialData';
 
 export {
@@ -37,6 +39,8 @@ export {
   INITIAL_CONEXOES,
   INITIAL_PUBLICACOES,
   INITIAL_MENSAGENS,
+  INITIAL_NOTIFICACOES,
+  DEFAULT_NOTIFICACOES,
 };
 
 const AuthAndDataContext = createContext(null);
@@ -99,8 +103,134 @@ export function AuthAndDataProvider({ children }) {
   ]);
 
   const [mensagens, setMensagens] = useState([]);
+  const [notificacoes, setNotificacoes] = useState([]);
+  const [serverUnreadCount, setServerUnreadCount] = useState(0);
+
+  const notificacoesNaoLidasCount = useMemo(() => {
+    if (Array.isArray(notificacoes)) {
+      return notificacoes.filter((n) => Number(n.lida) === 0 || n.lida === false).length;
+    }
+    return serverUnreadCount;
+  }, [notificacoes, serverUnreadCount]);
 
   const [sessionToken, setSessionToken] = useState(null);
+
+  // Carregar notificações do backend (UC-22 / RN-031)
+  const carregarNotificacoes = useCallback(async (customUserId, customUserType) => {
+    const activeUserId = customUserId || (userType === 'EMPRESA' ? empresaPerfil?.id : candidatoPerfil?.id);
+    const activeUserType = customUserType || userType;
+
+    if (!activeUserId) {
+      setNotificacoes([]);
+      setServerUnreadCount(0);
+      return { total: 0, nao_lidas: 0, notificacoes: [] };
+    }
+
+    try {
+      const res = await apiFetch(`${API_BASE_URL}/notificacoes?usuario_id=${activeUserId}&usuario_tipo=${activeUserType}`);
+      if (res && res.ok) {
+        const data = await res.json();
+        const items = Array.isArray(data.notificacoes) ? data.notificacoes : (Array.isArray(data) ? data : []);
+        const normalized = items.map((n) => ({
+          ...n,
+          lida: Number(n.lida) === 1 || n.lida === true ? 1 : 0,
+          tipo: n.tipo || n.tipo_evento || 'CANDIDATURA',
+          tipo_evento: n.tipo_evento || n.tipo || 'CANDIDATURA',
+        }));
+        setNotificacoes(normalized);
+        const unread = typeof data.nao_lidas === 'number' ? data.nao_lidas : normalized.filter((n) => Number(n.lida) === 0).length;
+        setServerUnreadCount(unread);
+        return data;
+      }
+    } catch (_) {
+      // Preserva o estado atual em caso de falha de rede
+    }
+    return { total: 0, nao_lidas: 0, notificacoes: [] };
+  }, [userType, empresaPerfil?.id, candidatoPerfil?.id]);
+
+  // Baixa de notificação individual (RN-031) com atualização otimista imediata
+  const marcarNotificacaoComoLida = useCallback(async (notificacaoId) => {
+    const notifIdNum = Number(notificacaoId);
+    // 1. Atualização Otimista Imediata (decrementa o badge na hora)
+    setNotificacoes((prev) =>
+      prev.map((n) =>
+        n.id === notifIdNum || String(n.id) === String(notificacaoId)
+          ? { ...n, lida: 1 }
+          : n
+      )
+    );
+
+    const activeUserId = userType === 'EMPRESA' ? empresaPerfil?.id : candidatoPerfil?.id;
+    try {
+      const res = await apiFetch(`${API_BASE_URL}/notificacoes/${notificacaoId}/lida`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario_id: activeUserId }),
+      });
+      if (res && res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      // Falha de rede silenciosa preservando estado otimista
+    }
+    return { success: true, id: notifIdNum, lida: 1 };
+  }, [userType, empresaPerfil?.id, candidatoPerfil?.id]);
+
+  // Baixa em lote de todas as notificações (RN-031) com atualização otimista imediata
+  const marcarTodasNotificacoesComoLidas = useCallback(async () => {
+    // 1. Atualização Otimista Imediata (zera o badge na hora)
+    setNotificacoes((prev) => prev.map((n) => ({ ...n, lida: 1 })));
+    setServerUnreadCount(0);
+
+    const activeUserId = userType === 'EMPRESA' ? empresaPerfil?.id : candidatoPerfil?.id;
+    try {
+      const res = await apiFetch(`${API_BASE_URL}/notificacoes/marcar-todas-lidas`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: activeUserId || 1,
+          usuario_tipo: userType,
+        }),
+      });
+      if (res && res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      // Falha de rede silenciosa preservando estado otimista
+    }
+    return { success: true, afetadas: notificacoes.length };
+  }, [userType, empresaPerfil?.id, candidatoPerfil?.id, notificacoes.length]);
+
+  // Criação de notificação
+  const criarNotificacao = useCallback(async (dados) => {
+    const activeUserId = userType === 'EMPRESA' ? empresaPerfil?.id : candidatoPerfil?.id;
+    const payload = {
+      usuario_id: dados.usuario_id || activeUserId,
+      usuario_tipo: dados.usuario_tipo || userType,
+      tipo_evento: dados.tipo_evento || dados.tipo || 'CANDIDATURA',
+      titulo: dados.titulo,
+      mensagem: dados.mensagem,
+      referencia_id: dados.referencia_id || null,
+    };
+
+    try {
+      const res = await apiFetch(`${API_BASE_URL}/notificacoes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res && res.ok) {
+        const nova = await res.json();
+        const normalizada = { ...nova, lida: 0 };
+        setNotificacoes((prev) => [normalizada, ...prev]);
+        return normalizada;
+      }
+    } catch (err) {
+      const novaMock = { id: Date.now(), ...payload, lida: 0, created_at: new Date().toISOString() };
+      setNotificacoes((prev) => [novaMock, ...prev]);
+      return novaMock;
+    }
+  }, [userType, empresaPerfil?.id, candidatoPerfil?.id]);
 
   // Sincronização inicial com o Backend Node/MySQL (equalis_db)
   useEffect(() => {
@@ -170,7 +300,9 @@ export function AuthAndDataProvider({ children }) {
         }
       })
       .catch(() => {});
-  }, [sessionToken, userType, candidatoPerfil?.id, empresaPerfil?.id]);
+
+    carregarNotificacoes(activeUserId, userType);
+  }, [sessionToken, userType, candidatoPerfil?.id, empresaPerfil?.id, carregarNotificacoes]);
 
   const navigate = useCallback(
     (nextScreen, params = {}) => {
@@ -220,6 +352,8 @@ export function AuthAndDataProvider({ children }) {
     setExperiencias([]);
     setCandidaturas([]);
     setMensagens([]);
+    setNotificacoes(INITIAL_NOTIFICACOES || []);
+    setServerUnreadCount(0);
     setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
     setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
     setSearchTerm('');
@@ -474,6 +608,8 @@ export function AuthAndDataProvider({ children }) {
     setExperiencias([]);
     setCandidaturas([]);
     setMensagens([]);
+    setNotificacoes([]);
+    setServerUnreadCount(0);
     setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
     setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
     setUserType('CANDIDATO');
@@ -518,6 +654,8 @@ export function AuthAndDataProvider({ children }) {
     setExperiencias([]);
     setCandidaturas([]);
     setMensagens([]);
+    setNotificacoes([]);
+    setServerUnreadCount(0);
     setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
     setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
     setUserType('EMPRESA');
@@ -573,14 +711,16 @@ export function AuthAndDataProvider({ children }) {
       const alvo = candidaturas.find((c) => c.vaga_id === vagaId);
       setCandidaturas((prev) =>
         prev.map((c) =>
-          c.vaga_id === vagaId ? { ...c, status_processo: 'CANCELADA' } : c
+          c.vaga_id === vagaId
+            ? { ...c, status_processo: 'CANCELADA', status: 'CANCELADA' }
+            : c
         )
       );
       if (alvo?.id) {
         apiFetch(`${API_BASE_URL}/candidaturas/${alvo.id}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status_processo: 'CANCELADA' }),
+          body: JSON.stringify({ status: 'CANCELADA', status_processo: 'CANCELADA' }),
         }).catch(() => {});
       }
     },
@@ -590,13 +730,15 @@ export function AuthAndDataProvider({ children }) {
   const atualizarStatusCandidatura = useCallback((candidaturaId, novoStatus) => {
     setCandidaturas((prev) =>
       prev.map((c) =>
-        c.id === candidaturaId ? { ...c, status_processo: novoStatus } : c
+        c.id === candidaturaId
+          ? { ...c, status_processo: novoStatus, status: novoStatus }
+          : c
       )
     );
-    apiFetch(`${API_BASE_URL}/candidaturas/${candidaturaId}/status`, {
+    return apiFetch(`${API_BASE_URL}/candidaturas/${candidaturaId}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status_processo: novoStatus }),
+      body: JSON.stringify({ status: novoStatus, status_processo: novoStatus }),
     }).catch(() => {});
   }, []);
 
@@ -605,12 +747,16 @@ export function AuthAndDataProvider({ children }) {
     (dadosVaga) => {
       const companyId = empresaPerfil?.id || Date.now();
       const companyNome = dadosVaga.empresa_nome || empresaPerfil?.nome_fantasia || 'Empresa Inclusiva';
+      const cargoTitulo = dadosVaga.cargo || dadosVaga.titulo || '';
+      const local = dadosVaga.localEmpresa || (dadosVaga.cidade ? `${dadosVaga.cidade} - ${dadosVaga.estado || 'DF'}` : 'Brasília - DF');
       const novaVaga = {
         id: Date.now(),
         empresa_id: companyId,
         empresa_nome: companyNome,
-        titulo: dadosVaga.titulo,
+        titulo: cargoTitulo,
+        cargo: cargoTitulo,
         descricao: dadosVaga.descricao,
+        localEmpresa: local,
         requerimentos: dadosVaga.requerimentos || 'Ensino Médio Completo.',
         categoria: dadosVaga.categoria || 'Atendimento',
         carga_horaria: dadosVaga.carga_horaria || '6 horas',
@@ -622,10 +768,7 @@ export function AuthAndDataProvider({ children }) {
         salario: parseFloat(dadosVaga.salario) || 2000,
         link_externo: dadosVaga.link_externo || '',
         status: 'ABERTA',
-        acessibilidades_ids:
-          dadosVaga.acessibilidades_ids && dadosVaga.acessibilidades_ids.length > 0
-            ? dadosVaga.acessibilidades_ids
-            : [1, 2, 3],
+        acessibilidades_ids: dadosVaga.acessibilidades_ids || [],
         recursos_acessibilidade: dadosVaga.recursos_acessibilidade || [
           'Ambiente Adaptado PcD',
           'Processo Seletivo Acessível',
@@ -720,7 +863,31 @@ export function AuthAndDataProvider({ children }) {
   );
 
   const criarPublicacao = useCallback(
-    (conteudo, vagaId = null) => {
+    (conteudoOuPayload, vagaId = null) => {
+      let conteudoFinal = '';
+      let midiaUrl = null;
+      let midiaTipo = null;
+      let audioDesc = null;
+      let idVaga = vagaId;
+
+      if (typeof conteudoOuPayload === 'object' && conteudoOuPayload !== null) {
+        conteudoFinal = String(conteudoOuPayload.conteudo || '');
+        midiaUrl = conteudoOuPayload.imagem || conteudoOuPayload.midia_url || null;
+        midiaTipo = conteudoOuPayload.midia_tipo || (midiaUrl ? String(midiaUrl).split('.').pop() : null);
+        audioDesc = conteudoOuPayload.audiodescricao || null;
+        if (conteudoOuPayload.vagaId !== undefined && conteudoOuPayload.vagaId !== null) {
+          idVaga = conteudoOuPayload.vagaId;
+        }
+
+        if (audioDesc && !conteudoFinal.includes('#PraCegoVer')) {
+          conteudoFinal = conteudoFinal.trim()
+            ? `${conteudoFinal.trim()}\n\n[#PraCegoVer: ${audioDesc.trim()}]`
+            : `[#PraCegoVer: ${audioDesc.trim()}]`;
+        }
+      } else {
+        conteudoFinal = String(conteudoOuPayload || '');
+      }
+
       const novaPub = {
         id: Date.now(),
         autor_tipo: userType,
@@ -733,8 +900,9 @@ export function AuthAndDataProvider({ children }) {
           userType === 'EMPRESA'
             ? 'Empresa Inclusiva • Agora mesmo'
             : `${candidatoPerfil?.area_atuacao || 'Profissional PcD'}${candidatoPerfil?.cidade ? ` • ${candidatoPerfil.cidade}, ${candidatoPerfil?.estado || 'DF'}` : ''}`,
-        conteudo,
-        vaga_id: vagaId,
+        conteudo: conteudoFinal,
+        midia_url: midiaUrl,
+        vaga_id: idVaga,
         curtidas: 0,
         curtidoPeloUsuario: false,
         comentarios: 0,
@@ -1011,20 +1179,32 @@ export function AuthAndDataProvider({ children }) {
   );
 
   const atualizarEmpresaPerfil = useCallback(
-    (novosDados) => {
-      setEmpresaPerfil((prev) => {
-        const atualizado = { ...prev, ...novosDados };
-        if (atualizado.id) {
-          apiFetch(`${API_BASE_URL}/empresas/${atualizado.id}/perfil`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(atualizado),
-          }).catch(() => {});
+    async (novosDados) => {
+      let resultado = null;
+      const targetId = novosDados?.id || empresaPerfil?.id || 1;
+      const atualizado = { ...empresaPerfil, ...novosDados };
+      setEmpresaPerfil(atualizado);
+
+      try {
+        const res = await apiFetch(`${API_BASE_URL}/empresas/${targetId}/perfil`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(atualizado),
+        });
+        if (res && res.ok) {
+          const data = await res.json();
+          resultado = data;
+          if (data && data.empresa) {
+            setEmpresaPerfil((prev) => ({ ...prev, ...data.empresa }));
+          }
         }
-        return atualizado;
-      });
+      } catch (err) {
+        // Fallback defensivo mantendo atualização local
+      }
+
+      return resultado || { success: true, empresa: atualizado };
     },
-    []
+    [empresaPerfil]
   );
 
   const recarregarDados = useCallback(() => {
@@ -1069,8 +1249,10 @@ export function AuthAndDataProvider({ children }) {
           if (Array.isArray(data)) setCandidaturas(data);
         })
         .catch(() => {});
+
+      carregarNotificacoes(activeUserId, userType);
     }
-  }, [userType, empresaPerfil?.id, candidatoPerfil?.id]);
+  }, [userType, empresaPerfil?.id, candidatoPerfil?.id, carregarNotificacoes]);
 
   const value = {
     currentScreen,
@@ -1127,6 +1309,12 @@ export function AuthAndDataProvider({ children }) {
     mensagens,
     enviarMensagem,
     marcarMensagemComoLida,
+    notificacoes,
+    notificacoesNaoLidasCount,
+    carregarNotificacoes,
+    marcarNotificacaoComoLida,
+    marcarTodasNotificacoesComoLidas,
+    criarNotificacao,
     recarregarDados,
     apiBaseUrl: getActiveApiBaseUrl(),
   };

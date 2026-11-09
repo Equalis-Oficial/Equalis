@@ -25,10 +25,12 @@ export default function HomeScreen() {
     adicionarComentario,
     republicarPublicacao,
     enviarMensagem,
+    mensagens,
     navigate,
     vagas,
   } = useAuthAndData();
   const { colors, typography, radius } = theme;
+  const unreadMessagesCount = (mensagens || []).filter((m) => Boolean(m.nao_lida)).length;
 
   const [feedSearch, setFeedSearch] = useState('');
   const [commentOpenPostId, setCommentOpenPostId] = useState(null);
@@ -149,7 +151,7 @@ export default function HomeScreen() {
             }
           }}
           onMessagesPress={() => navigate('MENSAGENS')}
-          unreadMessagesCount={3}
+          unreadMessagesCount={unreadMessagesCount}
           onActionPress={() => {
             if (userType === 'EMPRESA') {
               navigate('PUBLICAR_VAGA_EMPRESA');

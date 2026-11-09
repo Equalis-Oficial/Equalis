@@ -334,11 +334,173 @@ async function run() {
     descricao: 'Centro Universitário do Planalto Central com infraestrutura 100% acessível.',
   });
   assert.strictEqual(empPut.status, 200);
-  console.log('✔ [24/24] Gestão de Perfil Institucional GET/PUT /api/empresas/:id: OK');
+  console.log('✔ [24/30] Gestão de Perfil Institucional GET/PUT /api/empresas/:id: OK');
 
-    console.log('========================================================');
-    console.log(' TODAS AS 24 ROTAS DA API PASSARAM COM 100% DE SUCESSO!');
-    console.log('========================================================');
+  // ====================================================================
+  // TESTES DO MILESTONE 1 (M1) — EMPRESAS, VAGAS, CANDIDATURAS E NOTIFICAÇÕES
+  // ====================================================================
+
+  // 25. Validação de Obrigatoriedade de Acessibilidade em Vagas (RN-026 / RN-027, MSG-020)
+  const vagaSemAcessibilidade = await request('POST', '/api/vagas', {
+    empresa_id: 1,
+    titulo: 'Desenvolvedor Node.js Inclusivo',
+    cargo: 'Desenvolvedor Node.js Inclusivo',
+    descricao: 'Desenvolvimento backend com Express e MySQL',
+    requerimentos: 'JavaScript, Express, Clean MVC',
+    localEmpresa: 'Remoto',
+    salario: 6500,
+    acessibilidades_ids: [], // Violação intencional per RN-027
+  });
+  assert.strictEqual(vagaSemAcessibilidade.status, 400);
+  assert.strictEqual(
+    vagaSemAcessibilidade.data.erro,
+    'Preencha todos os campos obrigatórios para anunciar a vaga.'
+  );
+
+  const vagaArrayAninhado = await request('POST', '/api/vagas', {
+    empresa_id: 1,
+    titulo: 'Desenvolvedor Node.js Inclusivo',
+    cargo: 'Desenvolvedor Node.js Inclusivo',
+    descricao: 'Desenvolvimento backend com Express e MySQL',
+    requerimentos: 'JavaScript, Express, Clean MVC',
+    localEmpresa: 'Remoto',
+    salario: 6500,
+    acessibilidades_ids: [[1]],
+  });
+  assert.strictEqual(vagaArrayAninhado.status, 400);
+  assert.strictEqual(
+    vagaArrayAninhado.data.erro,
+    'Preencha todos os campos obrigatórios para anunciar a vaga.'
+  );
+  console.log('✔ [25/30] Rejeição de Vaga sem Recursos de Acessibilidade (RN-026/027, MSG-020): OK');
+
+  // 26. Gestão Avançada de Perfil da Empresa com Colunas Corporativas (UC-14, RN-018, RN-019)
+  const empPerfilPut = await request('PUT', '/api/empresas/1/perfil', {
+    nome_fantasia: 'Centro Universitário UNICEPLAC',
+    setor: 'Educação Superior e Tecnologia',
+    localizacao: 'Gama, DF',
+    site: 'https://uniceplac.edu.br',
+    telefone: '(61) 3035-3900',
+    descricao: 'Campus 100% acessível para PcD.',
+  });
+  assert.strictEqual(empPerfilPut.status, 200);
+  assert.strictEqual(empPerfilPut.data.empresa.setor, 'Educação Superior e Tecnologia');
+  assert.strictEqual(empPerfilPut.data.empresa.site, 'https://uniceplac.edu.br');
+  assert.strictEqual(empPerfilPut.data.empresa.telefone, '(61) 3035-3900');
+  console.log('✔ [26/30] Atualização Completa de Perfil Corporativo (UC-14, RN-018, RN-019): OK');
+
+  // 27. Rejeição de URL Inválida no Perfil da Empresa (RN-018, MSG-012)
+  for (const badSite of ['url_completamente_invalida_sem_ponto', 'ftp:empresa.com', 'javascript:void.com', '.empresa.com', 'https://empresa.com/<script>alert(1)</script>']) {
+    const empSiteInvalido = await request('PUT', '/api/empresas/1/perfil', {
+      site: badSite,
+    });
+    assert.strictEqual(empSiteInvalido.status, 400);
+    assert.strictEqual(
+      empSiteInvalido.data.erro,
+      'O campo Site Institucional deve seguir um formato de URL válido (ex. www.empresa.com).'
+    );
+  }
+  console.log('✔ [27/30] Rejeição de Site Inválido per RN-018 (MSG-012): OK');
+
+  // 28. Rejeição de Telefone Inválido no Perfil da Empresa (RN-019, MSG-013)
+  for (const badTel of ['1234', '61-98765-4321; DROP TABLE Empresa;', 'abc61987654321xyz']) {
+    const empTelInvalido = await request('PUT', '/api/empresas/1/perfil', {
+      telefone: badTel,
+    });
+    assert.strictEqual(empTelInvalido.status, 400);
+    assert.strictEqual(
+      empTelInvalido.data.erro,
+      'Insira um número de telefone válido.'
+    );
+  }
+  console.log('✔ [28/30] Rejeição de Telefone Inválido per RN-019 (MSG-013): OK');
+
+  // 29. Transição Canônica de Status de Candidatura com Disparo Reativo (R1 & UC-20)
+  const vagaTesteNotif = await request('POST', '/api/vagas', {
+    empresa_id: 1,
+    titulo: 'Engenheiro de Acessibilidade Web',
+    cargo: 'Engenheiro de Acessibilidade Web',
+    descricao: 'Adequação WCAG 2.2 AAA',
+    requerimentos: 'HTML semântico e WAI-ARIA',
+    localEmpresa: 'Brasília, DF',
+    salario: 8000,
+    acessibilidades_ids: [1, 2],
+  });
+  assert.strictEqual(vagaTesteNotif.status, 201);
+  const candTesteNotif = await request('POST', '/api/candidaturas', {
+    candidato_id: 1,
+    vaga_id: vagaTesteNotif.data.id,
+  });
+  assert.strictEqual(candTesteNotif.status, 201);
+
+  // Avança para status ENTREVISTA AGENDADA
+  const statusAvancado = await request(
+    'PATCH',
+    `/api/candidaturas/${candTesteNotif.data.id}/status`,
+    { status: 'ENTREVISTA AGENDADA' }
+  );
+  assert.strictEqual(statusAvancado.status, 200);
+  assert.strictEqual(statusAvancado.data.status_processo, 'ENTREVISTA AGENDADA');
+
+  // Rejeição de status ilegal
+  const statusInvalido = await request(
+    'PATCH',
+    `/api/candidaturas/${candTesteNotif.data.id}/status`,
+    { status: 'STATUS_INEXISTENTE_XYZ' }
+  );
+  assert.strictEqual(statusInvalido.status, 400);
+  console.log('✔ [29/30] Transição Canônica de Status de Candidatura & Rejeição de Status Inválido: OK');
+
+  // 30. Central de Notificações: Ciclo Completo (UC-22 & RN-031)
+  // 30.1 Consulta de Notificações do Candidato
+  const notifsCandidato = await request(
+    'GET',
+    '/api/notificacoes?usuario_id=1&usuario_tipo=CANDIDATO'
+  );
+  assert.strictEqual(notifsCandidato.status, 200);
+  assert.ok(typeof notifsCandidato.data.total === 'number');
+  assert.ok(typeof notifsCandidato.data.nao_lidas === 'number');
+  assert.ok(Array.isArray(notifsCandidato.data.notificacoes));
+
+  // 30.2 Criação Manual de Notificação
+  const novaNotif = await request('POST', '/api/notificacoes', {
+    usuario_id: 1,
+    usuario_tipo: 'CANDIDATO',
+    tipo_evento: 'CONVITE',
+    titulo: 'Novo Convite de Conexão',
+    mensagem: 'Carlos Recrutador enviou um convite de conexão profissional.',
+    referencia_id: 2,
+  });
+  assert.strictEqual(novaNotif.status, 201);
+  assert.strictEqual(novaNotif.data.titulo, 'Novo Convite de Conexão');
+  const notifId = novaNotif.data.id;
+
+  // 30.3 Marcação Individual de Notificação como Lida (Baixa no badge RN-031)
+  const baixaIndividual = await request('PATCH', `/api/notificacoes/${notifId}/lida`);
+  assert.strictEqual(baixaIndividual.status, 200);
+  assert.strictEqual(baixaIndividual.data.success, true);
+
+  // 30.4 Marcação em Lote de Todas como Lidas
+  const baixaTodas = await request('PATCH', '/api/notificacoes/marcar-todas-lidas', {
+    usuario_id: 1,
+    usuario_tipo: 'CANDIDATO',
+  });
+  assert.strictEqual(baixaTodas.status, 200);
+  assert.strictEqual(baixaTodas.data.success, true);
+
+  // 30.5 Exclusão de Notificação
+  const delNotif = await request('DELETE', `/api/notificacoes/${notifId}`);
+  assert.strictEqual(delNotif.status, 200);
+
+  // Limpeza da vaga e candidatura de teste
+  await request('DELETE', `/api/candidaturas/${vagaTesteNotif.data.id}?candidato_id=1`);
+  await request('DELETE', `/api/vagas/${vagaTesteNotif.data.id}`);
+
+  console.log('✔ [30/30] Central de Notificações Completa (GET, POST, PATCH lida, PATCH todas, DELETE): OK');
+
+  console.log('========================================================');
+  console.log(' TODAS AS 30 ROTAS DA API PASSARAM COM 100% DE SUCESSO!');
+  console.log('========================================================');
   } finally {
     server.close();
   }

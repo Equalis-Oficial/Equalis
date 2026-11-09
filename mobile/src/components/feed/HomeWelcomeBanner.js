@@ -19,7 +19,7 @@ export default function HomeWelcomeBanner({
   onSearchChange,
   onSearchSubmit,
   onMessagesPress,
-  unreadMessagesCount = 3,
+  unreadMessagesCount = 0,
   onActionPress,
   onA11yPress,
   isSpeaking = false,
@@ -256,10 +256,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '100%',
   },
   heroTextCol: {
-    flex: 1.25,
-    paddingRight: 6,
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 10,
   },
   welcomeTitle: {
     color: '#FFFFFF',
@@ -302,7 +304,8 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   workingRafikiImg: {
-    flex: 0.85,
-    height: 120,
+    width: 140,
+    height: 125,
+    flexShrink: 0,
   },
 });

@@ -1,6 +1,7 @@
 /**
  * Repositório de Empresas — Equalis
  * Acesso a dados da tabela Empresa (MySQL 8).
+ * Suporte a perfil corporativo completo: setor, localização, site e telefone.
  */
 const { execMySQL } = require('../config/database');
 
@@ -24,7 +25,9 @@ async function buscarPorCnpj(cnpj) {
 
 async function buscarPorId(id) {
   const rows = await execMySQL(
-    `SELECT id, nome_fantasia, cnpj, email, descricao, created_at, updated_at
+    `SELECT id, nome_fantasia, cnpj, email, descricao,
+            setor, localizacao, site, telefone,
+            created_at, updated_at
      FROM Empresa WHERE id = ? AND deleted_at IS NULL`,
     [Number(id)]
   );
@@ -33,30 +36,64 @@ async function buscarPorId(id) {
 
 async function listarTodas() {
   const rows = await execMySQL(
-    `SELECT id, nome_fantasia, cnpj, email, descricao, created_at
+    `SELECT id, nome_fantasia, cnpj, email, descricao,
+            setor, localizacao, site, telefone,
+            created_at
      FROM Empresa WHERE deleted_at IS NULL ORDER BY id ASC`
   );
   return Array.isArray(rows) ? rows : [];
 }
 
-async function criar({ nome_fantasia, cnpj, email, senha, descricao }) {
+async function criar({
+  nome_fantasia,
+  cnpj,
+  email,
+  senha,
+  descricao,
+  setor = null,
+  localizacao = null,
+  site = null,
+  telefone = null,
+}) {
   const result = await execMySQL(
-    `INSERT INTO Empresa (nome_fantasia, cnpj, email, senha, descricao)
-     VALUES (?, ?, ?, ?, ?)`,
-    [nome_fantasia, cnpj, email, senha, descricao]
+    `INSERT INTO Empresa (nome_fantasia, cnpj, email, senha, descricao, setor, localizacao, site, telefone)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      nome_fantasia,
+      cnpj,
+      email,
+      senha,
+      descricao,
+      setor || null,
+      localizacao || null,
+      site || null,
+      telefone || null,
+    ]
   );
   const id = result && result.insertId ? result.insertId : null;
   return buscarPorId(id);
 }
 
-async function atualizar(id, { nome_fantasia, descricao }) {
+async function atualizar(id, { nome_fantasia, descricao, setor, localizacao, site, telefone }) {
   await execMySQL(
     `UPDATE Empresa SET
        nome_fantasia = COALESCE(?, nome_fantasia),
        descricao = COALESCE(?, descricao),
+       setor = COALESCE(?, setor),
+       localizacao = COALESCE(?, localizacao),
+       site = COALESCE(?, site),
+       telefone = COALESCE(?, telefone),
        updated_at = CURRENT_TIMESTAMP
      WHERE id = ? AND deleted_at IS NULL`,
-    [nome_fantasia || null, descricao || null, Number(id)]
+    [
+      nome_fantasia !== undefined ? nome_fantasia : null,
+      descricao !== undefined ? descricao : null,
+      setor !== undefined ? setor : null,
+      localizacao !== undefined ? localizacao : null,
+      site !== undefined ? site : null,
+      telefone !== undefined ? telefone : null,
+      Number(id),
+    ]
   );
   return buscarPorId(id);
 }
@@ -69,4 +106,3 @@ module.exports = {
   criar,
   atualizar,
 };
-
