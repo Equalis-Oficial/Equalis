@@ -121,7 +121,7 @@ export default function HomeScreen() {
     if (isSpeaking) {
       stopSpeaking();
     } else {
-      speak(audioSummary);
+      speak(audioSummary, true);
     }
   };
 
@@ -140,6 +140,7 @@ export default function HomeScreen() {
           userType={userType}
           primeiroNome={primeiroNome}
           empresaNome={empresaPerfil?.nome_fantasia || 'Empresa'}
+          avatarUrl={userType === 'EMPRESA' ? empresaPerfil?.logo_url : candidatoPerfil?.avatar_url}
           onAvatarPress={() => {
             navigate(userType === 'EMPRESA' ? 'PERFIL_EMPRESA' : 'PERFIL_CANDIDATO');
           }}

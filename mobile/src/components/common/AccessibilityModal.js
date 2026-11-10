@@ -26,6 +26,8 @@ export default function AccessibilityModal() {
     setFontScale,
     highContrast,
     setHighContrast,
+    voiceEnabled,
+    setVoiceEnabled,
     speak,
     stopSpeaking,
     isSpeaking,
@@ -61,10 +63,12 @@ export default function AccessibilityModal() {
   };
 
   const handleToggleVoice = () => {
-    if (isSpeaking) {
+    const nextVal = !voiceEnabled;
+    setVoiceEnabled(nextVal);
+    if (!nextVal) {
       stopSpeaking();
     } else {
-      speak('Leitor de tela ativado.');
+      speak('Leitor de tela e voz assistiva ativados.', true);
     }
   };
 
@@ -273,13 +277,14 @@ export default function AccessibilityModal() {
             activeOpacity={0.8}
             onPress={handleToggleVoice}
             accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel={isSpeaking ? 'Parar leitura em voz alta' : 'Testar voz assistiva'}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: voiceEnabled }}
+            accessibilityLabel={`Voz assistiva está ${voiceEnabled ? 'ligada' : 'desligada'}`}
             style={[
               styles.actionRowCard,
               {
-                backgroundColor: isSpeaking ? colors.primary : colors.surfaceSoft,
-                borderColor: isSpeaking ? colors.primaryDark : colors.cardBorder,
+                backgroundColor: voiceEnabled ? colors.surfaceTint : colors.surfaceSoft,
+                borderColor: voiceEnabled ? colors.primaryDark : colors.cardBorder,
               },
             ]}
           >
@@ -287,35 +292,30 @@ export default function AccessibilityModal() {
               <Text
                 style={[
                   typography.labelLarge,
-                  { color: isSpeaking ? '#FFFFFF' : colors.textPrimary, fontWeight: '700' },
+                  { color: colors.textPrimary, fontWeight: '700' },
                 ]}
               >
-                🔊 Leitura em Voz Alta (TTS)
+                🔊 Leitura em Voz Alta (Voz Assistiva)
               </Text>
               <Text
                 style={[
                   typography.caption,
-                  { color: isSpeaking ? '#EAF4FF' : colors.textMuted, marginTop: 2 },
+                  { color: colors.textMuted, marginTop: 2 },
                 ]}
               >
-                {isSpeaking ? 'Falando agora...' : 'Ouvir textos da tela'}
+                {voiceEnabled ? (isSpeaking ? 'Falando agora (toque para silenciar)' : 'Voz ativada') : 'Totalmente silenciada'}
               </Text>
             </View>
             <View
               style={[
                 styles.togglePill,
                 {
-                  backgroundColor: isSpeaking ? '#FFFFFF' : colors.primaryDark,
+                  backgroundColor: voiceEnabled ? '#22C55E' : colors.cardBorder,
                 },
               ]}
             >
-              <Text
-                style={[
-                  styles.togglePillText,
-                  { color: isSpeaking ? colors.primaryDark : '#FFFFFF' },
-                ]}
-              >
-                {isSpeaking ? 'PARAR' : 'OUVIR'}
+              <Text style={styles.togglePillText}>
+                {voiceEnabled ? 'LIGADO' : 'DESLIGADO'}
               </Text>
             </View>
           </TouchableOpacity>

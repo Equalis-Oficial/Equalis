@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Platform, Alert } from 'react-native';
 import { FIGMA_ASSETS } from '../../theme/figmaAssets';
+import { useAuthAndData } from '../../context/AuthAndDataContext';
 
 export default function PerfilEmpresaHeader({
   empresaPerfil = {},
@@ -13,16 +14,94 @@ export default function PerfilEmpresaHeader({
   colors,
   typography,
 }) {
+  const { atualizarEmpresaPerfil } = useAuthAndData();
+
+  const isUniceplac =
+    empresaPerfil?.id === 1 ||
+    (empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC');
+
+  const companyInitials = (empresaPerfil?.nome_fantasia || 'EM')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('') || 'EM';
+
+  const handleUploadImage = (tipo) => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (e) => {
+        const file = e.target?.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = reader.result;
+            if (tipo === 'LOGO') {
+              atualizarEmpresaPerfil({ logo_url: dataUrl });
+            } else {
+              atualizarEmpresaPerfil({ banner_url: dataUrl });
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    } else {
+      Alert.alert(
+        tipo === 'LOGO' ? 'Logo da Empresa' : 'Capa da Empresa',
+        'Selecione uma imagem para o perfil da sua empresa.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Usar Imagem Demo',
+            onPress: () => {
+              const urlExemplo = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&auto=format&fit=crop';
+              if (tipo === 'LOGO') {
+                atualizarEmpresaPerfil({ logo_url: urlExemplo });
+              } else {
+                atualizarEmpresaPerfil({ banner_url: urlExemplo });
+              }
+            },
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <View>
-      <View style={styles.empresaBannerWrap}>
-        <Image
-          source={FIGMA_ASSETS.logoUniceplacBranca}
-          style={{ width: 140, height: 44 }}
-          resizeMode="contain"
-          accessible={true}
-          accessibilityLabel={empresaPerfil?.nome_fantasia ? `Logo de ${empresaPerfil.nome_fantasia}` : 'Logo da Empresa'}
-        />
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => handleUploadImage('BANNER')}
+        style={[styles.empresaBannerWrap, !isUniceplac && styles.genericBannerWrap]}
+        accessibilityLabel="Toque para alterar a imagem de capa da empresa"
+      >
+        {empresaPerfil?.banner_url ? (
+          <Image
+            source={{ uri: empresaPerfil.banner_url }}
+            style={StyleSheet.absoluteFillObject}
+            resizeMode="cover"
+          />
+        ) : isUniceplac ? (
+          <Image
+            source={FIGMA_ASSETS.logoUniceplacBranca}
+            style={{ width: 140, height: 44 }}
+            resizeMode="contain"
+            accessible={true}
+            accessibilityLabel="Logo da UNICEPLAC"
+          />
+        ) : (
+          <View style={styles.genericBannerContent}>
+            <Text style={styles.genericBannerIcon}>🏢</Text>
+            <Text style={styles.genericBannerText}>
+              {empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'}
+            </Text>
+            <Text style={styles.uploadHintSmall}>📷 Toque para alterar capa</Text>
+          </View>
+        )}
+
         <TouchableOpacity
           onPress={onOpenSettings}
           accessible={true}
@@ -32,10 +111,15 @@ export default function PerfilEmpresaHeader({
         >
           <Text style={styles.settingsIconText}>⚙️</Text>
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.profileHeaderBox}>
-        <View
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => handleUploadImage('LOGO')}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Toque para enviar o logo da sua empresa"
           style={[
             styles.avatarContainer,
             {
@@ -44,13 +128,26 @@ export default function PerfilEmpresaHeader({
             },
           ]}
         >
-          <Image
-            source={FIGMA_ASSETS.logoUniceplacQuadrada}
-            style={styles.empresaLogoImg}
-            resizeMode="cover"
-            accessible={true}
-            accessibilityLabel={empresaPerfil?.nome_fantasia ? `Brasão de ${empresaPerfil.nome_fantasia}` : 'Brasão da Empresa'}
-          />
+          {empresaPerfil?.logo_url ? (
+            <Image
+              source={{ uri: empresaPerfil.logo_url }}
+              style={styles.empresaLogoImg}
+              resizeMode="cover"
+            />
+          ) : isUniceplac ? (
+            <Image
+              source={FIGMA_ASSETS.logoUniceplacQuadrada}
+              style={styles.empresaLogoImg}
+              resizeMode="cover"
+              accessible={true}
+              accessibilityLabel="Brasão da UNICEPLAC"
+            />
+          ) : (
+            <View style={[styles.empresaInitialsBox, { backgroundColor: colors.primaryDark }]}>
+              <Text style={styles.empresaInitialsText}>{companyInitials}</Text>
+              <Text style={styles.avatarCameraBadge}>📷</Text>
+            </View>
+          )}
           <View
             style={[
               styles.statusBadge,
@@ -59,7 +156,7 @@ export default function PerfilEmpresaHeader({
             accessible={true}
             accessibilityLabel="Empresa Verificada"
           />
-        </View>
+        </TouchableOpacity>
 
         <Text
           style={[
@@ -184,6 +281,53 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
     position: 'relative',
+    overflow: 'hidden',
+  },
+  genericBannerWrap: {
+    backgroundColor: '#1E3A8A',
+  },
+  genericBannerContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  genericBannerIcon: {
+    fontSize: 26,
+    marginBottom: 2,
+  },
+  genericBannerText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  uploadHintSmall: {
+    color: '#93C5FD',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  empresaInitialsBox: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 39,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  empresaInitialsText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  avatarCameraBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    fontSize: 12,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 8,
+    padding: 2,
   },
   settingsIconBtn: {
     position: 'absolute',

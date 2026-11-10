@@ -25,8 +25,14 @@ export default function HomeWelcomeBanner({
   isSpeaking = false,
   isAccessibleMode = false,
   colors,
+  avatarUrl = null,
 }) {
   const isEmpresa = userType === 'EMPRESA';
+  const isUniceplac = isEmpresa && (empresaNome || '').toUpperCase().includes('UNICEPLAC');
+  const isMaria = !isEmpresa && (primeiroNome || '').toUpperCase().includes('MARIA');
+  const initials = isEmpresa
+    ? (empresaNome || 'E').slice(0, 2).toUpperCase()
+    : (primeiroNome || 'C').slice(0, 2).toUpperCase();
 
   return (
     <View style={[styles.headerContainer, { backgroundColor: '#007ADE' }]}>
@@ -38,13 +44,28 @@ export default function HomeWelcomeBanner({
           accessible={true}
           accessibilityRole="button"
           accessibilityLabel={isEmpresa ? `Perfil de ${empresaNome}` : `Perfil de ${primeiroNome}`}
-          style={styles.avatarBtn}
+          style={[
+            styles.avatarBtn,
+            !avatarUrl && !isUniceplac && !isMaria && { backgroundColor: '#1F41BB' },
+          ]}
         >
-          <Image
-            source={isEmpresa ? FIGMA_ASSETS.logoUniceplacQuadrada : FIGMA_ASSETS.avatarPandaRaposa}
-            style={styles.avatarImg}
-            resizeMode="cover"
-          />
+          {avatarUrl ? (
+            <Image source={{ uri: avatarUrl }} style={styles.avatarImg} resizeMode="cover" />
+          ) : isUniceplac ? (
+            <Image
+              source={FIGMA_ASSETS.logoUniceplacQuadrada}
+              style={styles.avatarImg}
+              resizeMode="cover"
+            />
+          ) : isMaria ? (
+            <Image
+              source={FIGMA_ASSETS.avatarPandaRaposa}
+              style={styles.avatarImg}
+              resizeMode="cover"
+            />
+          ) : (
+            <Text style={styles.avatarInitialsText}>{initials}</Text>
+          )}
         </TouchableOpacity>
 
         {/* Cápsula de Pesquisa Branca com Ícone de Lupa */}
@@ -177,6 +198,14 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
     overflow: 'hidden',
     backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitialsText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    textAlign: 'center',
   },
   avatarImg: {
     width: '100%',

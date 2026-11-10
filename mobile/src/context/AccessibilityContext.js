@@ -17,6 +17,7 @@ export function AccessibilityProvider({ children }) {
   const [isAccessibleMode, setIsAccessibleMode] = useState(false);
   const [fontScale, setFontScale] = useState(1.0);
   const [highContrast, setHighContrast] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechBannerText, setSpeechBannerText] = useState('');
   const [isA11yModalOpen, setIsA11yModalOpen] = useState(false);
@@ -36,8 +37,10 @@ export function AccessibilityProvider({ children }) {
     setSpeechBannerText('');
   }, []);
 
-  const speak = useCallback((text) => {
+  const speak = useCallback((text, force = false) => {
     if (!text) return;
+    // Se a voz assistiva estiver desativada e não foi uma solicitação explícita (force = true), não falar
+    if (!voiceEnabled && !force) return;
 
     if (speechTimerRef.current) {
       clearTimeout(speechTimerRef.current);
@@ -48,7 +51,7 @@ export function AccessibilityProvider({ children }) {
     setIsSpeaking(true);
 
     // Duração dinâmica calculada para auto-dispensar o banner suavemente
-    const displayDuration = Math.min(Math.max(text.length * 60, 3500), 7500);
+    const displayDuration = Math.min(Math.max(text.length * 60, 3000), 6000);
     speechTimerRef.current = setTimeout(() => {
       setIsSpeaking(false);
       setSpeechBannerText('');
@@ -80,7 +83,7 @@ export function AccessibilityProvider({ children }) {
         window.speechSynthesis.speak(utterance);
       }
     } catch (_) {}
-  }, []);
+  }, [voiceEnabled]);
 
   const cycleFontScale = useCallback(() => {
     setFontScale((prev) => {
@@ -105,6 +108,8 @@ export function AccessibilityProvider({ children }) {
       cycleFontScale,
       highContrast,
       setHighContrast,
+      voiceEnabled,
+      setVoiceEnabled,
       isSpeaking,
       speechBannerText,
       speak,
@@ -118,6 +123,7 @@ export function AccessibilityProvider({ children }) {
       fontScale,
       cycleFontScale,
       highContrast,
+      voiceEnabled,
       isSpeaking,
       speechBannerText,
       speak,

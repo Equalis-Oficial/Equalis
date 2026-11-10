@@ -175,26 +175,63 @@ export default function PerfilCandidatoScreen() {
                   'Empresa inclusiva comprometida com a acessibilidade e a contratação afirmativa de profissionais PcD sob a Lei nº 8.213/91.'}
               </Text>
 
-              <View style={{ marginTop: 14, gap: 8 }}>
-                <View style={styles.empresaA11yResource}>
-                  <Text style={{ fontSize: 16 }}>♿</Text>
-                  <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
-                    Rampas, banheiros acessíveis e elevadores em todos os blocos
-                  </Text>
+              {((empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC') || empresaPerfil?.id === 1) ? (
+                <View style={{ marginTop: 14, gap: 8 }}>
+                  <View style={styles.empresaA11yResource}>
+                    <Text style={{ fontSize: 16 }}>♿</Text>
+                    <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                      Rampas, banheiros acessíveis e elevadores em todos os blocos
+                    </Text>
+                  </View>
+                  <View style={styles.empresaA11yResource}>
+                    <Text style={{ fontSize: 16 }}>🤟</Text>
+                    <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                      Intérprete de Libras no campus e suporte ao colaborador
+                    </Text>
+                  </View>
+                  <View style={styles.empresaA11yResource}>
+                    <Text style={{ fontSize: 16 }}>💻</Text>
+                    <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                      Mobiliário regulável, piso tátil e tecnologias assistivas
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.empresaA11yResource}>
-                  <Text style={{ fontSize: 16 }}>🤟</Text>
-                  <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
-                    Intérprete de Libras no campus e suporte ao colaborador
-                  </Text>
+              ) : (
+                <View style={{ marginTop: 14, gap: 8 }}>
+                  {empresaPerfil?.setor ? (
+                    <View style={styles.empresaA11yResource}>
+                      <Text style={{ fontSize: 16 }}>🏢</Text>
+                      <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                        Setor: {empresaPerfil.setor}
+                      </Text>
+                    </View>
+                  ) : null}
+                  {empresaPerfil?.localizacao ? (
+                    <View style={styles.empresaA11yResource}>
+                      <Text style={{ fontSize: 16 }}>📍</Text>
+                      <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                        Localização: {empresaPerfil.localizacao}
+                      </Text>
+                    </View>
+                  ) : null}
+                  {empresaPerfil?.site ? (
+                    <View style={styles.empresaA11yResource}>
+                      <Text style={{ fontSize: 16 }}>🌐</Text>
+                      <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                        Site: {empresaPerfil.site}
+                      </Text>
+                    </View>
+                  ) : null}
+                  {empresaPerfil?.telefone ? (
+                    <View style={styles.empresaA11yResource}>
+                      <Text style={{ fontSize: 16 }}>📞</Text>
+                      <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                        Contato: {empresaPerfil.telefone}
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
-                <View style={styles.empresaA11yResource}>
-                  <Text style={{ fontSize: 16 }}>💻</Text>
-                  <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
-                    Mobiliário regulável, piso tátil e tecnologias assistivas
-                  </Text>
-                </View>
-              </View>
+              )}
             </View>
 
             <View style={[styles.sectionDivider, { backgroundColor: colors.dividerBeige }]} />

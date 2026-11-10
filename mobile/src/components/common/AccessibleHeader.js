@@ -67,6 +67,14 @@ export default function AccessibleHeader({
 
   const unreadCount = (mensagens || []).filter((m) => m.nao_lida).length;
 
+  const isEmpresa = userType === 'EMPRESA';
+  const isUniceplac = isEmpresa && (((empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC')) || empresaPerfil?.id === 1);
+  const isMaria = !isEmpresa && ((candidatoPerfil?.id === 1) || ((candidatoPerfil?.nome || candidatoPerfil?.nome_completo || '').toUpperCase().includes('MARIA')));
+  const headerAvatarUri = isEmpresa ? empresaPerfil?.logo_url : candidatoPerfil?.avatar_url;
+  const headerInitials = isEmpresa
+    ? (empresaPerfil?.nome_fantasia || 'E').slice(0, 2).toUpperCase()
+    : (candidatoPerfil?.nome || candidatoPerfil?.nome_completo || 'C').slice(0, 2).toUpperCase();
+
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -80,7 +88,7 @@ export default function AccessibleHeader({
       if (isSpeaking) {
         stopSpeaking();
       } else {
-        speak(audioSummary);
+        speak(audioSummary, true);
       }
     } else {
       setIsA11yModalOpen(true);
@@ -107,13 +115,35 @@ export default function AccessibleHeader({
               accessible={true}
               accessibilityRole="button"
               accessibilityLabel={userType === 'EMPRESA' ? `Abrir perfil de ${empresaPerfil?.nome_fantasia || 'Empresa'}` : `Abrir meu perfil de candidato`}
-              style={[styles.avatarCircle, { borderColor: colors.primary }]}
+              style={[
+                styles.avatarCircle,
+                { borderColor: colors.primary },
+                !headerAvatarUri && !isUniceplac && !isMaria && { backgroundColor: colors.primaryDark },
+              ]}
             >
-              <Image
-                source={userType === 'EMPRESA' ? FIGMA_ASSETS.logoUniceplacQuadrada : FIGMA_ASSETS.avatarPandaRaposa}
-                style={styles.avatarImage}
-                resizeMode="cover"
-              />
+              {headerAvatarUri ? (
+                <Image
+                  source={{ uri: headerAvatarUri }}
+                  style={styles.avatarImage}
+                  resizeMode="cover"
+                />
+              ) : isUniceplac ? (
+                <Image
+                  source={FIGMA_ASSETS.logoUniceplacQuadrada}
+                  style={styles.avatarImage}
+                  resizeMode="cover"
+                />
+              ) : isMaria ? (
+                <Image
+                  source={FIGMA_ASSETS.avatarPandaRaposa}
+                  style={styles.avatarImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
+                  {headerInitials}
+                </Text>
+              )}
             </TouchableOpacity>
           )}
 
