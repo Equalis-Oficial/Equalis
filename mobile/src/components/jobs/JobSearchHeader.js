@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  Image,
 } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function JobSearchHeader({
   onBack,
@@ -70,7 +72,11 @@ export default function JobSearchHeader({
             accessibilityLabel="Configurações de acessibilidade, contraste e tamanho de texto"
             style={[styles.a11ySettingsBtn, { backgroundColor: colors.surfaceTint }]}
           >
-            <Text style={styles.a11ySettingsIcon}>⚙️</Text>
+            <Image
+              source={FIGMA_ICONS.settingsGear}
+              style={{ width: 18, height: 18 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -84,7 +90,11 @@ export default function JobSearchHeader({
       >
         {/* Campo 1: Localidade */}
         <View style={[styles.capsulePill, { backgroundColor: '#FFFFFF' }]}>
-          <Text style={styles.capsuleIcon}>📍</Text>
+          <Image
+            source={FIGMA_ICONS.location}
+            style={{ width: 15, height: 15, marginRight: 6 }}
+            resizeMode="contain"
+          />
           <TextInput
             value={locationFilter}
             onChangeText={onChangeLocationFilter}
@@ -106,7 +116,11 @@ export default function JobSearchHeader({
 
         {/* Campo 2: Cargo / Palavra-chave */}
         <View style={[styles.capsulePill, styles.capsulePillRight, { backgroundColor: '#FFFFFF' }]}>
-          <Text style={styles.capsuleIcon}>🔍</Text>
+          <Image
+            source={FIGMA_ICONS.search}
+            style={{ width: 15, height: 15, marginRight: 6 }}
+            resizeMode="contain"
+          />
           <TextInput
             value={keywordFilter}
             onChangeText={onChangeKeywordFilter}

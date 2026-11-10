@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function PerfilSecaoFormacoes({
   formacoes = [],
@@ -44,7 +45,11 @@ export default function PerfilSecaoFormacoes({
             },
           ]}
         >
-          <Text style={styles.emptyStateEmoji}>🎓</Text>
+          <Image
+            source={FIGMA_ICONS.jobDocument}
+            style={{ width: 36, height: 36, marginBottom: 8, opacity: 0.6 }}
+            resizeMode="contain"
+          />
           <Text
             style={[
               typography.labelLarge,
@@ -87,7 +92,11 @@ export default function PerfilSecaoFormacoes({
             ]}
           >
             <View style={styles.cardItemHeader}>
-              <Text style={styles.cardItemIcon}>🎓</Text>
+              <Image
+                source={FIGMA_ICONS.jobDocument}
+                style={{ width: 18, height: 18, marginRight: 8, marginTop: 2 }}
+                resizeMode="contain"
+              />
               <View style={{ flex: 1 }}>
                 <Text
                   style={[
@@ -146,7 +155,7 @@ export default function PerfilSecaoFormacoes({
                 accessibilityLabel={`Excluir formação acadêmica de ${form.diploma} em ${form.instituicao}`}
                 style={styles.cardActionDeleteBtn}
               >
-                <Text style={styles.cardActionDeleteBtnText}>🗑️ Excluir formação</Text>
+                <Text style={styles.cardActionDeleteBtnText}>Excluir formação</Text>
               </TouchableOpacity>
             </View>
           </View>

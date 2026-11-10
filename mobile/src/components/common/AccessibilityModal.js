@@ -93,7 +93,6 @@ export default function AccessibilityModal() {
           {/* Cabeçalho Limpo */}
           <View style={styles.headerRow}>
             <View style={styles.headerTitleWrap}>
-              <Text style={styles.headerIcon}>♿</Text>
               <Text
                 style={[
                   typography.titleLarge,
@@ -124,7 +123,7 @@ export default function AccessibilityModal() {
                 { color: colors.textPrimary, fontWeight: '700', marginBottom: 8 },
               ]}
             >
-              🔠 Tamanho da Fonte
+              Tamanho da Fonte
             </Text>
             <View style={styles.fontScaleRow}>
               {[
@@ -200,7 +199,7 @@ export default function AccessibilityModal() {
                   { color: highContrast ? '#FFFFFF' : colors.textPrimary, fontWeight: '700' },
                 ]}
               >
-                🌓 Alto Contraste
+                Alto Contraste
               </Text>
               <Text
                 style={[
@@ -247,7 +246,7 @@ export default function AccessibilityModal() {
                   { color: colors.textPrimary, fontWeight: '700' },
                 ]}
               >
-                ♿ Tela com Blocos Grandes
+                Tela com Blocos Grandes
               </Text>
               <Text
                 style={[
@@ -295,7 +294,7 @@ export default function AccessibilityModal() {
                   { color: colors.textPrimary, fontWeight: '700' },
                 ]}
               >
-                🔊 Leitura em Voz Alta (Voz Assistiva)
+                Leitura em Voz Alta (Voz Assistiva)
               </Text>
               <Text
                 style={[

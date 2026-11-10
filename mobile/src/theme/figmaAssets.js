@@ -35,5 +35,26 @@ export const FIGMA_ASSETS = {
   ondasEmpregoHeader: require('../../assets/figma/ondas_emprego_header.png'),
   logoCityVaga: require('../../assets/figma/logo_city_vaga.png'),
   logoEnsignaVaga: require('../../assets/figma/logo_ensigna_vaga.png'),
+
+  // Ícones Oficiais do Figma (Phosphor / Iconex / Iconly)
+  iconTabHome: require('../../assets/figma/icon_tab_home.png'),
+  iconTabRede: require('../../assets/figma/icon_tab_rede.png'),
+  iconTabPublicar: require('../../assets/figma/icon_tab_publicar.png'),
+  iconTabNotificacoes: require('../../assets/figma/icon_tab_notificacoes.png'),
+  iconTabVagas: require('../../assets/figma/icon_tab_vagas.png'),
+  iconSearch: require('../../assets/figma/icon_search.png'),
+  iconChatBubble: require('../../assets/figma/icon_chat_bubble.png'),
+  iconSettingsGear: require('../../assets/figma/icon_settings_gear.png'),
+  iconLocation: require('../../assets/figma/icon_location.png'),
+  iconWork: require('../../assets/figma/icon_work.png'),
+  iconCheck: require('../../assets/figma/icon_check.png'),
+  iconArrowBack: require('../../assets/figma/icon_arrow_back.png'),
+  iconPostLike: require('../../assets/figma/icon_post_like.png'),
+  iconPostComment: require('../../assets/figma/icon_post_comment.png'),
+  iconPostShare: require('../../assets/figma/icon_post_share.png'),
+  iconJobDocument: require('../../assets/figma/icon_job_document.png'),
+  iconJobCash: require('../../assets/figma/icon_job_cash.png'),
+  iconJobStar: require('../../assets/figma/icon_job_star.png'),
+  iconJobTime: require('../../assets/figma/icon_job_time.png'),
 };
 

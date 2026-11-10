@@ -29,28 +29,28 @@ export default function AdicionarSecaoScreen() {
       id: 'SOBRE',
       title: 'Adicionar seção sobre',
       subtitle: 'Apresente sua trajetória, competências e objetivos inclusivos.',
-      icon: '✍️',
+      iconAsset: FIGMA_ASSETS.iconJobDocument,
       target: 'SECAO_SOBRE',
     },
     {
       id: 'FORMACAO',
       title: 'Adicionar formação acadêmica',
       subtitle: 'Graduação, cursos técnicos ou certificações.',
-      icon: '🎓',
+      iconAsset: FIGMA_ASSETS.iconJobStar,
       target: 'ADICIONAR_FORMACAO',
     },
     {
       id: 'CARGO',
       title: 'Adicionar cargo',
       subtitle: 'Experiências de trabalho, voluntariado ou estágio.',
-      icon: '💼',
+      iconAsset: FIGMA_ASSETS.iconWork,
       target: 'ADICIONAR_CARGO',
     },
     {
       id: 'EDITAR',
       title: 'Editar Perfil',
       subtitle: 'Atualize nome, área de atuação e dados de localização.',
-      icon: '⚙️',
+      iconAsset: FIGMA_ASSETS.iconSettingsGear,
       target: 'EDITAR_PERFIL',
     },
   ];
@@ -60,21 +60,21 @@ export default function AdicionarSecaoScreen() {
       id: 'INFO_EMPRESA',
       title: 'Adicionar informações da empresa',
       subtitle: 'Setor de atuação, localização, site e canais de contato corporativo.',
-      icon: '🏢',
+      iconAsset: FIGMA_ASSETS.iconWork,
       target: 'INFORMACOES_EMPRESA',
     },
     {
       id: 'SOBRE_EMPRESA',
       title: 'Adicionar seção sobre a empresa',
       subtitle: 'Apresente a missão inclusiva, cultura e iniciativas corporativas.',
-      icon: '✍️',
+      iconAsset: FIGMA_ASSETS.iconJobDocument,
       target: 'SECAO_SOBRE',
     },
     {
       id: 'EDITAR_PERFIL_EMPRESA',
       title: 'Editar Perfil',
       subtitle: 'Configurações corporativas, preferências de vagas e privacidade.',
-      icon: '⚙️',
+      iconAsset: FIGMA_ASSETS.iconSettingsGear,
       target: 'CONFIGURACOES_PERFIL',
     },
   ];
@@ -153,7 +153,12 @@ export default function AdicionarSecaoScreen() {
                   { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
                 ]}
               >
-                <Text style={styles.optIcon}>{opt.icon}</Text>
+                <Image
+                  source={opt.iconAsset}
+                  style={{ width: 22, height: 22, tintColor: colors.primaryDark }}
+                  resizeMode="contain"
+                  accessible={false}
+                />
               </View>
 
               <View style={styles.optMeta}>

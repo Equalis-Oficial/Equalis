@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function PerfilSecaoExperiencias({
   experiencias = [],
@@ -44,7 +45,11 @@ export default function PerfilSecaoExperiencias({
             },
           ]}
         >
-          <Text style={styles.emptyStateEmoji}>💼</Text>
+          <Image
+            source={FIGMA_ICONS.work}
+            style={{ width: 36, height: 36, marginBottom: 8, opacity: 0.6 }}
+            resizeMode="contain"
+          />
           <Text
             style={[
               typography.labelLarge,
@@ -87,7 +92,11 @@ export default function PerfilSecaoExperiencias({
             ]}
           >
             <View style={styles.cardItemHeader}>
-              <Text style={styles.cardItemIcon}>🏢</Text>
+              <Image
+                source={FIGMA_ICONS.work}
+                style={{ width: 18, height: 18, marginRight: 8, marginTop: 2 }}
+                resizeMode="contain"
+              />
               <View style={{ flex: 1 }}>
                 <Text
                   style={[
@@ -162,7 +171,7 @@ export default function PerfilSecaoExperiencias({
                 accessibilityLabel={`Excluir experiência de ${exp.cargo} na ${exp.organizacao}`}
                 style={styles.cardActionDeleteBtn}
               >
-                <Text style={styles.cardActionDeleteBtnText}>🗑️ Excluir cargo</Text>
+                <Text style={styles.cardActionDeleteBtnText}>Excluir cargo</Text>
               </TouchableOpacity>
             </View>
           </View>

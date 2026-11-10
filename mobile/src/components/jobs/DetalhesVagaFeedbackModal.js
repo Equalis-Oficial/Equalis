@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function DetalhesVagaFeedbackModal({
   visible = false,
@@ -20,9 +21,24 @@ export default function DetalhesVagaFeedbackModal({
     >
       <View style={styles.modalOverlay}>
         <View style={[styles.modalCard, { backgroundColor: colors.background }]}>
-          <Text style={styles.modalEmoji}>
-            {tipo === 'SUCESSO' ? '🎉' : '⚠️'}
-          </Text>
+          <View
+            style={[
+              styles.iconCircle,
+              {
+                backgroundColor: tipo === 'SUCESSO' ? '#E6F4EA' : '#FEE2E2',
+              },
+            ]}
+          >
+            {tipo === 'SUCESSO' ? (
+              <Image
+                source={FIGMA_ICONS.check}
+                style={{ width: 28, height: 28, tintColor: '#137333' }}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text style={{ fontSize: 26, fontWeight: '800', color: colors.danger }}>!</Text>
+            )}
+          </View>
 
           <Text
             style={[
@@ -91,9 +107,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 8,
   },
-  modalEmoji: {
-    fontSize: 48,
-    marginBottom: 12,
+  iconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   modalTitle: {
     fontWeight: '800',

@@ -336,7 +336,7 @@ export default function EscolhaDeficienciaScreen() {
               { color: colors.primaryDark, fontWeight: '700', marginBottom: 4 },
             ]}
           >
-            📄 Laudo Médico / CID (Opcional)
+            Laudo Médico / CID (Opcional)
           </Text>
 
           <Text
@@ -355,7 +355,6 @@ export default function EscolhaDeficienciaScreen() {
                 { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
               ]}
             >
-              <Text style={styles.fileIcon}>📎</Text>
               <View style={{ flex: 1, marginRight: 8 }}>
                 <Text
                   style={[
@@ -372,7 +371,7 @@ export default function EscolhaDeficienciaScreen() {
                     { color: colors.textSecondary, fontSize: 11, marginTop: 2 },
                   ]}
                 >
-                  {tamanhoLaudo} • 🛡️ Lei nº 8.213/91 Verificada
+                  {tamanhoLaudo} • Lei nº 8.213/91 Verificada
                 </Text>
               </View>
               <TouchableOpacity
@@ -389,7 +388,7 @@ export default function EscolhaDeficienciaScreen() {
             </View>
           ) : (
             <AccessibleButton
-              title="📎 Anexar Laudo Médico (PDF ou Imagem)"
+              title="Anexar Laudo Médico (PDF ou Imagem)"
               variant="outline"
               onPress={handleUploadLaudo}
               accessibilityHint="Abre o seletor de arquivos para enviar o laudo com CID"
@@ -414,7 +413,7 @@ export default function EscolhaDeficienciaScreen() {
               { color: colors.primaryDark, fontWeight: '700', marginBottom: 4 },
             ]}
           >
-            💼 Currículo Profissional (Opcional)
+            Currículo Profissional (Opcional)
           </Text>
 
           <Text
@@ -433,7 +432,6 @@ export default function EscolhaDeficienciaScreen() {
                 { backgroundColor: colors.surfaceTint, borderColor: colors.uniceplacGreen },
               ]}
             >
-              <Text style={styles.fileIcon}>📄</Text>
               <View style={{ flex: 1, marginRight: 8 }}>
                 <Text
                   style={[
@@ -450,7 +448,7 @@ export default function EscolhaDeficienciaScreen() {
                     { color: colors.textSecondary, fontSize: 11, marginTop: 2 },
                   ]}
                 >
-                  {tamanhoCurriculo} • 💼 Vinculado ao Perfil
+                  {tamanhoCurriculo} • Vinculado ao Perfil
                 </Text>
               </View>
               <TouchableOpacity
@@ -467,7 +465,7 @@ export default function EscolhaDeficienciaScreen() {
             </View>
           ) : (
             <AccessibleButton
-              title="📄 Anexar Currículo (PDF)"
+              title="Anexar Currículo (PDF)"
               variant="outline"
               onPress={handleUploadCurriculo}
               accessibilityHint="Abre o seletor de arquivos para enviar seu currículo"

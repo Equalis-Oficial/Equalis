@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { FIGMA_ASSETS } from '../../theme/figmaAssets';
+import { FIGMA_ASSETS, FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function PerfilCandidatoHeader({
   candidatoPerfil = {},
@@ -31,7 +31,11 @@ export default function PerfilCandidatoHeader({
           accessibilityLabel="Configurações do perfil"
           style={styles.settingsIconBtn}
         >
-          <Text style={styles.settingsIconText}>⚙️</Text>
+          <Image
+            source={FIGMA_ICONS.settingsGear}
+            style={{ width: 18, height: 18 }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </View>
 
@@ -145,7 +149,15 @@ export default function PerfilCandidatoHeader({
           accessible={true}
           accessibilityLabel={`Disponível para: ${candidatoPerfil.disponivelPara || 'Oportunidades Inclusivas'}`}
         >
-          <Text style={styles.disponivelIcon}>✨</Text>
+          <View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: colors.primary,
+              marginRight: 6,
+            }}
+          />
           <Text
             style={[
               typography.caption,

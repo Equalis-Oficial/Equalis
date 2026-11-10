@@ -1,22 +1,23 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Image } from 'react-native';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuthAndData } from '../../context/AuthAndDataContext';
+import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 
 const TABS_CANDIDATO = [
-  { id: 'HOME', label: 'Início', icon: '🏠', target: 'HOME' },
-  { id: 'REDE', label: 'Rede', icon: '👥', target: 'REDE' },
-  { id: 'PUBLICAR', label: 'Publicar', icon: '🖼️', target: 'CRIAR_PUBLICACAO' },
-  { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'NOTIFICACOES' },
-  { id: 'VAGAS', label: 'Vagas', icon: '💼', target: 'EMPREGO' },
+  { id: 'HOME', label: 'Início', iconAsset: FIGMA_ASSETS.iconTabHome, target: 'HOME' },
+  { id: 'REDE', label: 'Rede', iconAsset: FIGMA_ASSETS.iconTabRede, target: 'REDE' },
+  { id: 'PUBLICAR', label: 'Publicar', iconAsset: FIGMA_ASSETS.iconTabPublicar, target: 'CRIAR_PUBLICACAO' },
+  { id: 'NOTIFICACOES', label: 'Notificações', iconAsset: FIGMA_ASSETS.iconTabNotificacoes, target: 'NOTIFICACOES' },
+  { id: 'VAGAS', label: 'Vagas', iconAsset: FIGMA_ASSETS.iconTabVagas, target: 'EMPREGO' },
 ];
 
 const TABS_EMPRESA = [
-  { id: 'HOME', label: 'Feed', icon: '🏠', target: 'HOME' },
-  { id: 'VAGAS', label: 'Vagas', icon: '💼', target: 'EMPREGO' },
-  { id: 'PUBLICAR', label: '+ Criar Vaga', icon: '➕', target: 'PUBLICAR_VAGA_EMPRESA' },
-  { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'NOTIFICACOES' },
-  { id: 'PERFIL', label: 'Empresa', icon: '🏢', target: 'PERFIL_EMPRESA' },
+  { id: 'HOME', label: 'Feed', iconAsset: FIGMA_ASSETS.iconTabHome, target: 'HOME' },
+  { id: 'VAGAS', label: 'Vagas', iconAsset: FIGMA_ASSETS.iconTabVagas, target: 'EMPREGO' },
+  { id: 'PUBLICAR', label: '+ Vaga', iconAsset: FIGMA_ASSETS.iconTabPublicar, target: 'PUBLICAR_VAGA_EMPRESA' },
+  { id: 'NOTIFICACOES', label: 'Notificações', iconAsset: FIGMA_ASSETS.iconTabNotificacoes, target: 'NOTIFICACOES' },
+  { id: 'PERFIL', label: 'Empresa', iconAsset: FIGMA_ASSETS.iconWork, target: 'PERFIL_EMPRESA' },
 ];
 
 export default function BottomTabBar({ activeTab = 'HOME' }) {
@@ -89,7 +90,17 @@ export default function BottomTabBar({ activeTab = 'HOME' }) {
             ) : null}
 
             <View style={styles.iconContainer}>
-              <Text style={styles.tabIcon}>{tab.icon}</Text>
+              <Image
+                source={tab.iconAsset}
+                style={[
+                  styles.tabIconImg,
+                  {
+                    tintColor: isSelected ? colors.primary : colors.textMuted,
+                  },
+                ]}
+                resizeMode="contain"
+                accessible={false}
+              />
               {showBadge ? (
                 <View
                   style={[
@@ -158,9 +169,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabIcon: {
-    fontSize: 20,
-    marginBottom: 2,
+  tabIconImg: {
+    width: 22,
+    height: 22,
+    marginBottom: 3,
   },
   badge: {
     position: 'absolute',

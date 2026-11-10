@@ -5,9 +5,11 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuthAndData } from '../../context/AuthAndDataContext';
+import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
 import BottomTabBar from '../../components/common/BottomTabBar';
 import PerfilCandidatoHeader from '../../components/profile/PerfilCandidatoHeader';
@@ -178,19 +180,19 @@ export default function PerfilCandidatoScreen() {
               {((empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC') || empresaPerfil?.id === 1) ? (
                 <View style={{ marginTop: 14, gap: 8 }}>
                   <View style={styles.empresaA11yResource}>
-                    <Text style={{ fontSize: 16 }}>♿</Text>
+                    <Image source={FIGMA_ASSETS.iconePcdAzul} style={{ width: 16, height: 16, marginRight: 8 }} resizeMode="contain" />
                     <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                       Rampas, banheiros acessíveis e elevadores em todos os blocos
                     </Text>
                   </View>
                   <View style={styles.empresaA11yResource}>
-                    <Text style={{ fontSize: 16 }}>🤟</Text>
+                    <Image source={FIGMA_ASSETS.iconChatBubble} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                     <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                       Intérprete de Libras no campus e suporte ao colaborador
                     </Text>
                   </View>
                   <View style={styles.empresaA11yResource}>
-                    <Text style={{ fontSize: 16 }}>💻</Text>
+                    <Image source={FIGMA_ASSETS.iconWork} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                     <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                       Mobiliário regulável, piso tátil e tecnologias assistivas
                     </Text>
@@ -200,7 +202,7 @@ export default function PerfilCandidatoScreen() {
                 <View style={{ marginTop: 14, gap: 8 }}>
                   {empresaPerfil?.setor ? (
                     <View style={styles.empresaA11yResource}>
-                      <Text style={{ fontSize: 16 }}>🏢</Text>
+                      <Image source={FIGMA_ASSETS.iconWork} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                       <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                         Setor: {empresaPerfil.setor}
                       </Text>
@@ -208,7 +210,7 @@ export default function PerfilCandidatoScreen() {
                   ) : null}
                   {empresaPerfil?.localizacao ? (
                     <View style={styles.empresaA11yResource}>
-                      <Text style={{ fontSize: 16 }}>📍</Text>
+                      <Image source={FIGMA_ASSETS.iconLocation} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                       <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                         Localização: {empresaPerfil.localizacao}
                       </Text>
@@ -216,7 +218,7 @@ export default function PerfilCandidatoScreen() {
                   ) : null}
                   {empresaPerfil?.site ? (
                     <View style={styles.empresaA11yResource}>
-                      <Text style={{ fontSize: 16 }}>🌐</Text>
+                      <Image source={FIGMA_ASSETS.iconJobDocument} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                       <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                         Site: {empresaPerfil.site}
                       </Text>
@@ -224,7 +226,7 @@ export default function PerfilCandidatoScreen() {
                   ) : null}
                   {empresaPerfil?.telefone ? (
                     <View style={styles.empresaA11yResource}>
-                      <Text style={{ fontSize: 16 }}>📞</Text>
+                      <Image source={FIGMA_ASSETS.iconChatBubble} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                       <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
                         Contato: {empresaPerfil.telefone}
                       </Text>

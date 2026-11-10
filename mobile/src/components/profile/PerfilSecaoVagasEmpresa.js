@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function PerfilSecaoVagasEmpresa({
   vagas = [],
@@ -45,7 +46,11 @@ export default function PerfilSecaoVagasEmpresa({
             },
           ]}
         >
-          <Text style={styles.emptyStateEmoji}>💼</Text>
+          <Image
+            source={FIGMA_ICONS.tabVagas}
+            style={{ width: 36, height: 36, marginBottom: 8, opacity: 0.6 }}
+            resizeMode="contain"
+          />
           <Text
             style={[
               typography.labelLarge,
@@ -88,7 +93,11 @@ export default function PerfilSecaoVagasEmpresa({
             ]}
           >
             <View style={styles.cardItemHeader}>
-              <Text style={styles.cardItemIcon}>💼</Text>
+              <Image
+                source={FIGMA_ICONS.tabVagas}
+                style={{ width: 18, height: 18, marginRight: 8, marginTop: 2 }}
+                resizeMode="contain"
+              />
               <View style={{ flex: 1 }}>
                 <Text
                   style={[
@@ -151,7 +160,7 @@ export default function PerfilSecaoVagasEmpresa({
                 accessibilityLabel={`Encerrar e excluir vaga de ${v.titulo}`}
               >
                 <Text style={[styles.empresaMiniBtnText, { color: colors.danger }]}>
-                  🗑️ Encerrar
+                  Encerrar
                 </Text>
               </TouchableOpacity>
             </View>

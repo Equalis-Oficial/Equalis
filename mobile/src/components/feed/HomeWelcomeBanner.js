@@ -70,7 +70,12 @@ export default function HomeWelcomeBanner({
 
         {/* Cápsula de Pesquisa Branca com Ícone de Lupa */}
         <View style={styles.searchCapsule}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Image
+            source={FIGMA_ASSETS.iconSearch}
+            style={styles.searchIconImg}
+            resizeMode="contain"
+            accessible={false}
+          />
           <TextInput
             value={searchValue}
             onChangeText={onSearchChange}
@@ -92,7 +97,12 @@ export default function HomeWelcomeBanner({
           accessibilityLabel={`Abrir mensagens. ${unreadMessagesCount} novas mensagens`}
           style={styles.chatBtn}
         >
-          <Text style={styles.chatIcon}>💬</Text>
+          <Image
+            source={FIGMA_ASSETS.iconChatBubble}
+            style={styles.chatIconImg}
+            resizeMode="contain"
+            accessible={false}
+          />
           {unreadMessagesCount > 0 ? (
             <View style={styles.chatBadge}>
               <Text style={styles.chatBadgeText}>{unreadMessagesCount}</Text>
@@ -108,7 +118,16 @@ export default function HomeWelcomeBanner({
           accessibilityLabel={isSpeaking ? 'Parar leitura de tela' : 'Ouvir resumo em voz alta da tela inicial'}
           style={[styles.a11yBtn, { backgroundColor: isSpeaking ? '#D93025' : 'rgba(255,255,255,0.25)' }]}
         >
-          <Text style={styles.a11yIcon}>{isSpeaking ? '⏹️' : '♿'}</Text>
+          {isSpeaking ? (
+            <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800' }}>STOP</Text>
+          ) : (
+            <Image
+              source={FIGMA_ASSETS.iconePcdAzul}
+              style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+              resizeMode="contain"
+              accessible={false}
+            />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -225,9 +244,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  searchIcon: {
-    fontSize: 15,
-    marginRight: 6,
+  searchIconImg: {
+    width: 16,
+    height: 16,
+    marginRight: 8,
+    tintColor: '#007ADE',
   },
   searchInput: {
     flex: 1,
@@ -247,8 +268,10 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
-  chatIcon: {
-    fontSize: 20,
+  chatIconImg: {
+    width: 20,
+    height: 20,
+    tintColor: '#FFFFFF',
   },
   chatBadge: {
     position: 'absolute',

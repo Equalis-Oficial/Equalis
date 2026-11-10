@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function ModalContatoCandidato({
   visible = false,
@@ -34,7 +35,13 @@ export default function ModalContatoCandidato({
           </Text>
 
           <View style={styles.contactItemRow}>
-            <Text style={styles.contactIcon}>📧</Text>
+            <View style={{ width: 24, alignItems: 'center', marginRight: 10 }}>
+              <Image
+                source={FIGMA_ICONS.chatBubble}
+                style={{ width: 18, height: 18 }}
+                resizeMode="contain"
+              />
+            </View>
             <View>
               <Text style={[typography.caption, { color: colors.textMuted }]}>E-mail</Text>
               <Text style={[typography.bodyLarge, { color: colors.textPrimary, fontWeight: '600' }]}>
@@ -44,7 +51,13 @@ export default function ModalContatoCandidato({
           </View>
 
           <View style={styles.contactItemRow}>
-            <Text style={styles.contactIcon}>📍</Text>
+            <View style={{ width: 24, alignItems: 'center', marginRight: 10 }}>
+              <Image
+                source={FIGMA_ICONS.location}
+                style={{ width: 18, height: 18 }}
+                resizeMode="contain"
+              />
+            </View>
             <View>
               <Text style={[typography.caption, { color: colors.textMuted }]}>Localização</Text>
               <Text style={[typography.bodyLarge, { color: colors.textPrimary, fontWeight: '600' }]}>
@@ -56,7 +69,13 @@ export default function ModalContatoCandidato({
           </View>
 
           <View style={styles.contactItemRow}>
-            <Text style={styles.contactIcon}>📄</Text>
+            <View style={{ width: 24, alignItems: 'center', marginRight: 10 }}>
+              <Image
+                source={FIGMA_ICONS.jobDocument}
+                style={{ width: 18, height: 18 }}
+                resizeMode="contain"
+              />
+            </View>
             <View>
               <Text style={[typography.caption, { color: colors.textMuted }]}>Currículo Anexo</Text>
               <Text style={[typography.bodyLarge, { color: colors.primaryDark, fontWeight: '600' }]}>
@@ -66,7 +85,13 @@ export default function ModalContatoCandidato({
           </View>
 
           <View style={styles.contactItemRow}>
-            <Text style={styles.contactIcon}>♿</Text>
+            <View style={{ width: 24, alignItems: 'center', marginRight: 10 }}>
+              <Image
+                source={FIGMA_ICONS.check}
+                style={{ width: 18, height: 18, tintColor: colors.success }}
+                resizeMode="contain"
+              />
+            </View>
             <View>
               <Text style={[typography.caption, { color: colors.textMuted }]}>Laudo Médico PcD</Text>
               <Text style={[typography.bodyLarge, { color: colors.success, fontWeight: '600' }]}>

@@ -30,7 +30,7 @@ export default function PerfilSecaoSobre({
           accessibilityLabel={hasContent ? 'Editar seção sobre' : 'Adicionar resumo sobre você'}
         >
           <Text style={[typography.caption, { color: colors.primary, fontWeight: '700' }]}>
-            {hasContent ? 'Editar ✏️' : '+ Adicionar'}
+            {hasContent ? 'Editar' : '+ Adicionar'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -80,7 +80,6 @@ export default function PerfilSecaoSobre({
             },
           ]}
         >
-          <Text style={styles.emptyStateEmoji}>✍️</Text>
           <Text
             style={[
               typography.labelLarge,

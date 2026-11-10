@@ -205,9 +205,9 @@ export default function DetalhesVagaAcessivelScreen() {
           </Text>
 
           <View style={styles.blueCardMetaRow}>
-            <Text style={styles.blueCardMetaBadge}>📍 {vaga.cidade}</Text>
-            <Text style={styles.blueCardMetaBadge}>💼 {vaga.carga_horaria}</Text>
-            <Text style={styles.blueCardMetaBadge}>🏢 {vaga.modalidade}</Text>
+            <Text style={styles.blueCardMetaBadge}>{vaga.cidade}</Text>
+            <Text style={styles.blueCardMetaBadge}>{vaga.carga_horaria}</Text>
+            <Text style={styles.blueCardMetaBadge}>{vaga.modalidade}</Text>
           </View>
 
           <View style={styles.blueCardSalaryBox}>
@@ -226,7 +226,6 @@ export default function DetalhesVagaAcessivelScreen() {
               { backgroundColor: '#E0F2FE', borderColor: colors.primaryDark },
             ]}
           >
-            <Text style={styles.candidaturaAtivaIcon}>📋</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.candidaturaAtivaTitle}>
                 VOCÊ JÁ ESTÁ CANDIDATADO A ESTA VAGA
@@ -256,13 +255,13 @@ export default function DetalhesVagaAcessivelScreen() {
             accessibilityRole="header"
             style={[styles.sectionHeaderBig, { color: colors.primaryDark }]}
           >
-            ♿ Recursos de Acessibilidade Disponíveis:
+            Recursos de Acessibilidade Disponíveis:
           </Text>
 
           <View style={styles.accessibilityListAcessivel}>
             {(vaga.recursos_acessibilidade || []).map((rec, i) => (
               <View key={i} style={styles.accessRowAcessivel}>
-                <Text style={styles.accessCheckIcon}>✅</Text>
+                <Text style={styles.accessCheckIcon}>✓</Text>
                 <Text style={[styles.accessTextAcessivel, { color: colors.textPrimary }]}>
                   {rec}
                 </Text>
@@ -340,7 +339,6 @@ export default function DetalhesVagaAcessivelScreen() {
               accessibilityLabel={`Link externo da vaga: ${vaga.link_externo}`}
               style={styles.linkExternoAcessivelBox}
             >
-              <Text style={styles.linkExternoAcessivelIcon}>🔗</Text>
               <Text style={styles.linkExternoAcessivelText}>
                 {vaga.link_externo}
               </Text>
@@ -420,9 +418,27 @@ export default function DetalhesVagaAcessivelScreen() {
               { backgroundColor: '#FFFFFF', borderColor: colors.primaryDark },
             ]}
           >
-            <Text style={styles.modalEmojiBig}>
-              {confirmModal.tipo === 'SUCESSO' ? '🎉' : '⚠️'}
-            </Text>
+            <View
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                backgroundColor: confirmModal.tipo === 'SUCESSO' ? '#DCFCE7' : '#FEE2E2',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 26,
+                  fontWeight: '800',
+                  color: confirmModal.tipo === 'SUCESSO' ? '#15803D' : colors.danger,
+                }}
+              >
+                {confirmModal.tipo === 'SUCESSO' ? '✓' : '!'}
+              </Text>
+            </View>
 
             <Text style={styles.modalTitleBig}>{confirmModal.titulo}</Text>
 

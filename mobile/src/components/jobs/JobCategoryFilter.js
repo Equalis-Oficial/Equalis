@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 export default function JobCategoryFilter({
   categories = [],
@@ -59,7 +59,18 @@ export default function JobCategoryFilter({
                   },
                 ]}
               >
-                <Text style={styles.categoryIconEmoji}>{cat.icon}</Text>
+                {cat.iconAsset ? (
+                  <Image
+                    source={cat.iconAsset}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      tintColor: isSelected ? '#FFFFFF' : colors.primaryDark,
+                    }}
+                    resizeMode="contain"
+                    accessible={false}
+                  />
+                ) : null}
               </View>
               <Text
                 style={[

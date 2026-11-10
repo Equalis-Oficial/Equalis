@@ -17,7 +17,6 @@ export default function PerfilEmpresaHeader({
   const { atualizarEmpresaPerfil } = useAuthAndData();
 
   const isUniceplac =
-    empresaPerfil?.id === 1 ||
     (empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC');
 
   const companyInitials = (empresaPerfil?.nome_fantasia || 'EM')
@@ -94,11 +93,16 @@ export default function PerfilEmpresaHeader({
           />
         ) : (
           <View style={styles.genericBannerContent}>
-            <Text style={styles.genericBannerIcon}>🏢</Text>
+            <Image
+              source={FIGMA_ASSETS.iconWork}
+              style={{ width: 28, height: 28, tintColor: '#FFFFFF', marginBottom: 6 }}
+              resizeMode="contain"
+              accessible={false}
+            />
             <Text style={styles.genericBannerText}>
               {empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'}
             </Text>
-            <Text style={styles.uploadHintSmall}>📷 Toque para alterar capa</Text>
+            <Text style={styles.uploadHintSmall}>Toque para alterar capa</Text>
           </View>
         )}
 
@@ -109,7 +113,12 @@ export default function PerfilEmpresaHeader({
           accessibilityLabel="Configurações da empresa"
           style={styles.settingsIconBtn}
         >
-          <Text style={styles.settingsIconText}>⚙️</Text>
+          <Image
+            source={FIGMA_ASSETS.iconSettingsGear}
+            style={{ width: 20, height: 20, tintColor: '#FFFFFF' }}
+            resizeMode="contain"
+            accessible={false}
+          />
         </TouchableOpacity>
       </TouchableOpacity>
 
@@ -145,7 +154,6 @@ export default function PerfilEmpresaHeader({
           ) : (
             <View style={[styles.empresaInitialsBox, { backgroundColor: colors.primaryDark }]}>
               <Text style={styles.empresaInitialsText}>{companyInitials}</Text>
-              <Text style={styles.avatarCameraBadge}>📷</Text>
             </View>
           )}
           <View
@@ -197,7 +205,12 @@ export default function PerfilEmpresaHeader({
             { backgroundColor: '#DCFCE7', borderColor: '#4ADE80' },
           ]}
         >
-          <Text style={{ fontSize: 16 }}>🛡️</Text>
+          <Image
+            source={FIGMA_ASSETS.iconCheck}
+            style={{ width: 14, height: 14, tintColor: '#15803D', marginRight: 6 }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text
             style={[
               typography.caption,
@@ -235,7 +248,7 @@ export default function PerfilEmpresaHeader({
             ]}
           >
             <Text style={[typography.labelLarge, { color: colors.primaryDark, fontWeight: '700' }]}>
-              📋 Inscrições ({candidaturasCount})
+              Inscrições ({candidaturasCount})
             </Text>
           </TouchableOpacity>
         </View>

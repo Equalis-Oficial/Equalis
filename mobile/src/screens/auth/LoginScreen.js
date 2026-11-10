@@ -227,7 +227,7 @@ export default function LoginScreen() {
                 },
               ]}
             >
-              ♿ Candidato PcD
+              Candidato PcD
             </Text>
           </TouchableOpacity>
 
@@ -258,7 +258,7 @@ export default function LoginScreen() {
                 },
               ]}
             >
-              🏢 Empresa
+              Empresa
             </Text>
           </TouchableOpacity>
         </View>
@@ -274,7 +274,7 @@ export default function LoginScreen() {
             ]}
           >
             <Text style={[typography.bodyMedium, { color: colors.danger, fontWeight: '700' }]}>
-              ⚠️ {feedbackMsg}
+              {feedbackMsg}
             </Text>
           </View>
         ) : null}
@@ -379,7 +379,6 @@ export default function LoginScreen() {
               { borderColor: colors.cardBorder, backgroundColor: colors.surfaceSoft },
             ]}
           >
-            <Text style={styles.socialEmoji}>🌐</Text>
             <Text style={[typography.caption, { fontWeight: '700', color: colors.textPrimary }]}>
               Google
             </Text>
@@ -396,7 +395,6 @@ export default function LoginScreen() {
               { borderColor: colors.cardBorder, backgroundColor: colors.surfaceSoft },
             ]}
           >
-            <Text style={styles.socialEmoji}>🍎</Text>
             <Text style={[typography.caption, { fontWeight: '700', color: colors.textPrimary }]}>
               Apple
             </Text>
@@ -413,7 +411,6 @@ export default function LoginScreen() {
               { borderColor: colors.primaryDark, backgroundColor: colors.surfaceTint },
             ]}
           >
-            <Text style={styles.socialEmoji}>🏛️</Text>
             <Text style={[typography.caption, { fontWeight: '700', color: colors.primaryDark }]}>
               Gov.br
             </Text>

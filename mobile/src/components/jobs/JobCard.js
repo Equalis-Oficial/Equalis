@@ -69,7 +69,12 @@ export default function JobCard({
 
           {/* Localidade */}
           <View style={styles.locationRow}>
-            <Text style={styles.locationPinEmoji}>📍</Text>
+            <Image
+              source={FIGMA_ASSETS.iconLocation}
+              style={{ width: 12, height: 12, marginRight: 4, tintColor: colors.textMuted }}
+              resizeMode="contain"
+              accessible={false}
+            />
             <Text
               style={[
                 typography.caption,
@@ -97,21 +102,36 @@ export default function JobCard({
       {/* Linha 3: Metadados (Carga horária + Avaliação + Tempo + Salário) */}
       <View style={styles.cardMetaRow}>
         <View style={styles.metaItem}>
-          <Text style={styles.metaIcon}>💼</Text>
+          <Image
+            source={FIGMA_ASSETS.iconWork}
+            style={{ width: 12, height: 12, marginRight: 4, tintColor: colors.primary }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text style={[typography.caption, { color: colors.textSecondary }]}>
             {vaga.carga_horaria || '6 horas'}
           </Text>
         </View>
 
         <View style={styles.metaItem}>
-          <Text style={styles.metaIcon}>⭐</Text>
+          <Image
+            source={FIGMA_ASSETS.iconJobStar}
+            style={{ width: 12, height: 12, marginRight: 4, tintColor: '#F59E0B' }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text style={[typography.caption, { color: colors.textSecondary, fontWeight: '700' }]}>
             {vaga.avaliacao_empresa || '4.9'}
           </Text>
         </View>
 
         <View style={styles.metaItem}>
-          <Text style={styles.metaIcon}>🕒</Text>
+          <Image
+            source={FIGMA_ASSETS.iconJobTime}
+            style={{ width: 12, height: 12, marginRight: 4, tintColor: colors.textMuted }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text style={[typography.caption, { color: colors.textMuted }]}>
             {vaga.tempo_publicacao || 'Recente'}
           </Text>

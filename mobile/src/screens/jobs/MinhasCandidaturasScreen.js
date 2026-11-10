@@ -9,7 +9,9 @@ import {
   StatusBar,
   Modal,
   Platform,
+  Image,
 } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuthAndData } from '../../context/AuthAndDataContext';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
@@ -181,42 +183,42 @@ export default function MinhasCandidaturasScreen() {
           bg: '#DCFCE7',
           border: '#4ADE80',
           text: '#15803D',
-          icon: '🎉',
+          dot: '#16A34A',
         };
       case 'ENTREVISTA AGENDADA':
         return {
           bg: '#F3E8FF',
           border: '#C084FC',
           text: '#6B21A8',
-          icon: '📅',
+          dot: '#9333EA',
         };
       case 'EM ANÁLISE':
         return {
           bg: '#FEF3C7',
           border: '#FBBF24',
           text: '#B45309',
-          icon: '⏳',
+          dot: '#D97706',
         };
       case 'ENVIADA':
         return {
           bg: '#E0F2FE',
           border: '#38BDF8',
           text: '#0369A1',
-          icon: '📨',
+          dot: '#0284C7',
         };
       case 'CANCELADA':
         return {
           bg: '#FEE2E2',
           border: '#F87171',
           text: '#B91C1C',
-          icon: '✕',
+          dot: '#DC2626',
         };
       default:
         return {
           bg: '#F1F5F9',
           border: '#CBD5E1',
           text: '#334155',
-          icon: '📌',
+          dot: '#64748B',
         };
     }
   };
@@ -243,7 +245,11 @@ export default function MinhasCandidaturasScreen() {
       >
         {/* BANNER INFORMATIVO */}
         <View style={[styles.infoBanner, { backgroundColor: colors.surfaceTint, borderColor: colors.cardBorder }]}>
-          <Text style={styles.infoBannerEmoji}>📢</Text>
+          <Image
+            source={FIGMA_ICONS.jobDocument}
+            style={{ width: 22, height: 22, marginRight: 8 }}
+            resizeMode="contain"
+          />
           <View style={{ flex: 1 }}>
             <Text style={[styles.infoBannerTitle, { color: colors.primaryDark }]}>
               Acompanhamento Inclusivo em Tempo Real
@@ -297,8 +303,12 @@ export default function MinhasCandidaturasScreen() {
         {/* LISTAGEM DAS CANDIDATURAS */}
         {candidaturasFiltradas.length === 0 ? (
           <View style={[styles.emptyContainer, { backgroundColor: colors.surfaceSoft }]}>
-            <Text style={styles.emptyEmoji}>📂</Text>
-            <Text style={[typography.titleMedium, { color: colors.textPrimary, marginTop: 10 }]}>
+            <Image
+              source={FIGMA_ICONS.jobDocument}
+              style={{ width: 44, height: 44, opacity: 0.6, marginBottom: 8 }}
+              resizeMode="contain"
+            />
+            <Text style={[typography.titleMedium, { color: colors.textPrimary, marginTop: 4 }]}>
               Nenhuma candidatura encontrada
             </Text>
             <Text
@@ -373,7 +383,15 @@ export default function MinhasCandidaturasScreen() {
                       },
                     ]}
                   >
-                    <Text style={styles.statusBadgeIcon}>{statusConfig.icon}</Text>
+                    <View
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: 4,
+                        backgroundColor: statusConfig.dot,
+                        marginRight: 5,
+                      }}
+                    />
                     <Text
                       style={[
                         styles.statusBadgeText,
@@ -386,11 +404,16 @@ export default function MinhasCandidaturasScreen() {
                 </View>
 
                 {/* Linha de Metadados: Localidade, Modalidade e Data */}
-                <View style={styles.cardMetaRow}>
+                <View style={[styles.cardMetaRow, { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 4 }]}>
+                  <Image
+                    source={FIGMA_ICONS.location}
+                    style={{ width: 12, height: 12 }}
+                    resizeMode="contain"
+                  />
                   <Text style={[typography.caption, { color: colors.textMuted }]}>
-                    📍 {item.vaga.cidade} • 💼 {item.vaga.modalidade}
+                    {item.vaga.cidade} • {item.vaga.modalidade}
                   </Text>
-                  <Text style={[typography.caption, { color: colors.textMuted }]}>
+                  <Text style={[typography.caption, { color: colors.textMuted, marginLeft: 8 }]}>
                     Data: {item.created_at || 'Recente'}
                   </Text>
                 </View>
@@ -409,7 +432,7 @@ export default function MinhasCandidaturasScreen() {
                         style={[typography.caption, { color: colors.primaryDark, fontSize: 11 }]}
                         numberOfLines={1}
                       >
-                        ♿ {rec}
+                        {rec}
                       </Text>
                     </View>
                   ))}
@@ -422,15 +445,15 @@ export default function MinhasCandidaturasScreen() {
                     <View style={styles.candidatoHeaderRow}>
                       <View style={{ flex: 1, marginRight: 8 }}>
                         <Text style={[typography.titleSmall, { color: colors.textPrimary, fontWeight: '700' }]}>
-                          👤 {item.candidato?.nome || 'Candidato PcD'}
+                          {item.candidato?.nome || 'Candidato PcD'}
                         </Text>
                         <Text style={[typography.caption, { color: colors.textMuted }]}>
-                          ✉️ {item.candidato?.email || 'contato@candidato.com.br'}
+                          {item.candidato?.email || 'contato@candidato.com.br'}
                         </Text>
                       </View>
                       <View style={[styles.seloCotaBadge, { backgroundColor: '#DCFCE7', borderColor: '#16A34A' }]}>
                         <Text style={[typography.caption, { color: '#15803D', fontWeight: '700', fontSize: 11 }]}>
-                          ⚖️ Lei nº 8.213/91 (Laudo Homologado)
+                          Lei nº 8.213/91 (Laudo Homologado)
                         </Text>
                       </View>
                     </View>
@@ -448,7 +471,7 @@ export default function MinhasCandidaturasScreen() {
                           style={[typography.caption, { color: colors.textSecondary, marginTop: 4, lineHeight: 16 }]}
                           numberOfLines={2}
                         >
-                          📝 {item.candidato.resumo_profissional}
+                          {item.candidato.resumo_profissional}
                         </Text>
                       ) : null}
 
@@ -462,7 +485,7 @@ export default function MinhasCandidaturasScreen() {
                         accessibilityHint="Toque duas vezes para visualizar o laudo homologado para a cota de PcD"
                       >
                         <Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>
-                          📋 Consultar Laudo Médico Homologado
+                          Consultar Laudo Médico Homologado
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -492,7 +515,7 @@ export default function MinhasCandidaturasScreen() {
                         accessibilityLabel="Colocar candidatura em análise"
                       >
                         <Text style={styles.empresaBtnText}>
-                          ⏳ Em Análise {item.status_processo === 'EM ANÁLISE' || item.status_processo === 'ENVIADA' ? '✓' : ''}
+                          Em Análise {item.status_processo === 'EM ANÁLISE' || item.status_processo === 'ENVIADA' ? '✓' : ''}
                         </Text>
                       </TouchableOpacity>
 
@@ -516,7 +539,7 @@ export default function MinhasCandidaturasScreen() {
                         accessibilityLabel="Agendar entrevista com o candidato"
                       >
                         <Text style={styles.empresaBtnText}>
-                          📅 Entrevista {item.status_processo === 'ENTREVISTA AGENDADA' ? '✓' : ''}
+                          Entrevista {item.status_processo === 'ENTREVISTA AGENDADA' ? '✓' : ''}
                         </Text>
                       </TouchableOpacity>
 
@@ -540,7 +563,7 @@ export default function MinhasCandidaturasScreen() {
                         accessibilityLabel="Aprovar candidato no processo seletivo"
                       >
                         <Text style={styles.empresaBtnText}>
-                          ✅ Aprovar {item.status_processo === 'APROVADA' ? '✓' : ''}
+                          Aprovar {item.status_processo === 'APROVADA' ? '✓' : ''}
                         </Text>
                       </TouchableOpacity>
 
@@ -564,7 +587,7 @@ export default function MinhasCandidaturasScreen() {
                         accessibilityLabel="Recusar ou cancelar candidatura"
                       >
                         <Text style={styles.empresaBtnText}>
-                          ✕ Cancelar {item.status_processo === 'CANCELADA' ? '✓' : ''}
+                          Cancelar {item.status_processo === 'CANCELADA' ? '✓' : ''}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -578,7 +601,7 @@ export default function MinhasCandidaturasScreen() {
                       accessibilityLabel={`Ouvir status da candidatura para ${item.vaga.titulo}`}
                       style={[styles.audioIndividualBtn, { borderColor: colors.primaryDark }]}
                     >
-                      <Text style={styles.audioIndividualText}>🔊 Ouvir</Text>
+                      <Text style={styles.audioIndividualText}>Ouvir</Text>
                     </TouchableOpacity>
 
                     <View style={styles.actionsRightSide}>
@@ -629,7 +652,20 @@ export default function MinhasCandidaturasScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: '#FFFFFF', borderRadius: radius.lg }]}>
-            <Text style={styles.modalEmoji}>⚠️</Text>
+            <View
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 26,
+                backgroundColor: '#FEE2E2',
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <Text style={{ fontSize: 24, fontWeight: '800', color: colors.danger }}>!</Text>
+            </View>
             <Text style={[typography.titleMedium, { color: colors.textPrimary, textAlign: 'center' }]}>
               Cancelar Candidatura?
             </Text>
@@ -670,7 +706,24 @@ export default function MinhasCandidaturasScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalBox, { backgroundColor: '#FFFFFF', borderRadius: radius.lg, maxWidth: 380 }]}>
-            <Text style={styles.modalEmoji}>⚖️</Text>
+            <View
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 26,
+                backgroundColor: '#DCFCE7',
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <Image
+                source={FIGMA_ICONS.jobDocument}
+                style={{ width: 26, height: 26, tintColor: '#15803D' }}
+                resizeMode="contain"
+              />
+            </View>
             <Text style={[typography.titleMedium, { color: colors.textPrimary, textAlign: 'center', fontWeight: '700' }]}>
               Laudo Médico Pericial Homologado
             </Text>

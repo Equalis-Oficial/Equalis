@@ -68,7 +68,7 @@ export default function AccessibleHeader({
   const unreadCount = (mensagens || []).filter((m) => m.nao_lida).length;
 
   const isEmpresa = userType === 'EMPRESA';
-  const isUniceplac = isEmpresa && (((empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC')) || empresaPerfil?.id === 1);
+  const isUniceplac = isEmpresa && ((empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC'));
   const isMaria = !isEmpresa && ((candidatoPerfil?.id === 1) || ((candidatoPerfil?.nome || candidatoPerfil?.nome_completo || '').toUpperCase().includes('MARIA')));
   const headerAvatarUri = isEmpresa ? empresaPerfil?.logo_url : candidatoPerfil?.avatar_url;
   const headerInitials = isEmpresa
@@ -107,7 +107,12 @@ export default function AccessibleHeader({
               accessibilityLabel="Voltar para a tela anterior"
               style={[styles.backCircle, { backgroundColor: colors.primary }]}
             >
-              <Text style={styles.backArrow}>←</Text>
+              <Image
+                source={FIGMA_ASSETS.iconArrowBack}
+                style={{ width: 16, height: 12, tintColor: '#FFFFFF' }}
+                resizeMode="contain"
+                accessible={false}
+              />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -153,7 +158,12 @@ export default function AccessibleHeader({
               { borderColor: colors.textSecondary, backgroundColor: '#FFFFFF' },
             ]}
           >
-            <Text style={styles.searchIcon}>🔍</Text>
+            <Image
+              source={FIGMA_ASSETS.iconSearch}
+              style={{ width: 15, height: 15, marginRight: 8, tintColor: colors.primary }}
+              resizeMode="contain"
+              accessible={false}
+            />
             <TextInput
               value={localSearch}
               onChangeText={handleSearchChange}
@@ -176,7 +186,7 @@ export default function AccessibleHeader({
               style={[styles.createPill, { borderColor: colors.textSecondary, backgroundColor: '#FFFFFF' }]}
             >
               <Text style={[typography.caption, { color: colors.textPrimary, fontWeight: '700' }]}>
-                ⊕ Criar
+                + Criar
               </Text>
             </TouchableOpacity>
           ) : null}
@@ -192,7 +202,12 @@ export default function AccessibleHeader({
             }
             style={[styles.iconButton, { borderColor: colors.primary, backgroundColor: '#FFFFFF' }]}
           >
-            <Text style={styles.chatEmoji}>💬</Text>
+            <Image
+              source={FIGMA_ASSETS.iconChatBubble}
+              style={{ width: 18, height: 18, tintColor: colors.primary }}
+              resizeMode="contain"
+              accessible={false}
+            />
             {unreadCount > 0 && (
               <View style={[styles.badge, { backgroundColor: colors.danger }]}>
                 <Text style={styles.badgeText}>{unreadCount}</Text>
@@ -300,7 +315,7 @@ export default function AccessibleHeader({
               ]}
             >
               <Text style={[typography.labelMedium, { color: colors.primaryDark, fontWeight: '800' }]}>
-                ♿ A+
+                A+
               </Text>
             </TouchableOpacity>
           </View>
@@ -313,7 +328,7 @@ export default function AccessibleHeader({
           style={[styles.speechBanner, { backgroundColor: colors.primaryDark }]}
         >
           <Text style={styles.speechBannerText} numberOfLines={2}>
-            🔊 Lendo: "{speechBannerText}"
+            Lendo: "{speechBannerText}"
           </Text>
           <View style={styles.bannerActionsRow}>
             <TouchableOpacity

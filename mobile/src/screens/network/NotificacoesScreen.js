@@ -9,7 +9,9 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
+  Image,
 } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuthAndData } from '../../context/AuthAndDataContext';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
@@ -149,9 +151,16 @@ export default function NotificacoesScreen() {
           accessibilityRole="button"
           accessibilityLabel="Ver acompanhamento de candidaturas"
         >
-          <Text style={[styles.shortcutText, { color: colors.primaryDark }]}>
-            📋 Ver Minhas Candidaturas
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Image
+              source={FIGMA_ICONS.jobDocument}
+              style={{ width: 14, height: 14 }}
+              resizeMode="contain"
+            />
+            <Text style={[styles.shortcutText, { color: colors.primaryDark }]}>
+              Ver Minhas Candidaturas
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -161,7 +170,11 @@ export default function NotificacoesScreen() {
       >
         {notificacoesFiltradas.length === 0 ? (
           <View style={[styles.emptyCard, { backgroundColor: colors.surfaceSoft }]}>
-            <Text style={styles.emptyIcon}>🔔</Text>
+            <Image
+              source={FIGMA_ICONS.tabNotificacoes}
+              style={{ width: 36, height: 36, opacity: 0.6 }}
+              resizeMode="contain"
+            />
             <Text style={[typography.titleMedium, { color: colors.textPrimary, marginTop: 8 }]}>
               Nenhuma notificação por enquanto
             </Text>

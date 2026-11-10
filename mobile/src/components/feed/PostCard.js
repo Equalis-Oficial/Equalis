@@ -184,7 +184,12 @@ export default function PostCard({
       >
         <View style={styles.likesCountWrap}>
           <View style={styles.likeBadgeCircle}>
-            <Text style={styles.likeThumbIcon}>👍</Text>
+            <Image
+              source={FIGMA_ASSETS.iconPostLike}
+              style={{ width: 12, height: 12, tintColor: '#FFFFFF' }}
+              resizeMode="contain"
+              accessible={false}
+            />
           </View>
           <Text style={[typography.caption, { color: colors.textMuted, marginLeft: 6, fontWeight: '600' }]}>
             {post.curtidas || 0}
@@ -213,7 +218,12 @@ export default function PostCard({
           accessibilityLabel={jaCurtiu ? 'Descurtir publicação' : 'Gostar da publicação'}
           style={styles.actionBtn}
         >
-          <Text style={styles.actionIcon}>{jaCurtiu ? '❤️' : '🤍'}</Text>
+          <Image
+            source={FIGMA_ASSETS.iconPostLike}
+            style={{ width: 18, height: 18, tintColor: jaCurtiu ? colors.danger : colors.textSecondary, marginBottom: 2 }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit={true}
@@ -236,7 +246,12 @@ export default function PostCard({
           accessibilityLabel="Comentar na publicação"
           style={styles.actionBtn}
         >
-          <Text style={styles.actionIcon}>💬</Text>
+          <Image
+            source={FIGMA_ASSETS.iconPostComment}
+            style={{ width: 18, height: 18, tintColor: colors.textSecondary, marginBottom: 2 }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit={true}
@@ -254,7 +269,12 @@ export default function PostCard({
           accessibilityLabel="Republicar este post"
           style={styles.actionBtn}
         >
-          <Text style={styles.actionIcon}>🔄</Text>
+          <Image
+            source={FIGMA_ASSETS.iconPostShare}
+            style={{ width: 18, height: 18, tintColor: colors.textSecondary, marginBottom: 2 }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit={true}
@@ -272,7 +292,12 @@ export default function PostCard({
           accessibilityLabel="Enviar publicação por mensagem"
           style={styles.actionBtn}
         >
-          <Text style={styles.actionIcon}>✈️</Text>
+          <Image
+            source={FIGMA_ASSETS.iconChatBubble}
+            style={{ width: 17, height: 17, tintColor: colors.textSecondary, marginBottom: 2 }}
+            resizeMode="contain"
+            accessible={false}
+          />
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit={true}

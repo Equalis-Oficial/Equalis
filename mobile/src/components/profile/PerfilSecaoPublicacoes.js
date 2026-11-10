@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { FIGMA_ASSETS } from '../../theme/figmaAssets';
+import { FIGMA_ASSETS, FIGMA_ICONS } from '../../theme/figmaAssets';
 
 export default function PerfilSecaoPublicacoes({
   publicacoes = [],
@@ -45,7 +45,11 @@ export default function PerfilSecaoPublicacoes({
             },
           ]}
         >
-          <Text style={styles.emptyStateEmoji}>📢</Text>
+          <Image
+            source={FIGMA_ICONS.tabPublicar}
+            style={{ width: 36, height: 36, marginBottom: 8, opacity: 0.6 }}
+            resizeMode="contain"
+          />
           <Text
             style={[
               typography.labelLarge,
@@ -114,7 +118,7 @@ export default function PerfilSecaoPublicacoes({
             </Text>
             <View style={styles.userPostMetrics}>
               <Text style={[typography.caption, { color: colors.textMuted }]}>
-                ❤️ {post.curtidas || 0} curtidas • 💬 {post.comentarios || 0} comentários
+                {post.curtidas || 0} curtidas • {post.comentarios || 0} comentários
               </Text>
             </View>
           </View>

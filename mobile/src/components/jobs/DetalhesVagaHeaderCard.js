@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 
 const formatCurrency = (val) => {
   if (typeof val === 'number') {
@@ -38,9 +39,22 @@ export default function DetalhesVagaHeaderCard({
             </Text>
           </TouchableOpacity>
 
-          <View style={styles.metaRow}>
+          <View style={[styles.metaRow, { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 4 }]}>
+            <Image
+              source={FIGMA_ICONS.location}
+              style={{ width: 13, height: 13 }}
+              resizeMode="contain"
+            />
             <Text style={[typography.caption, { color: colors.textMuted }]}>
-              📍 {vaga.cidade} • {vaga.modalidade} • 💼 {vaga.carga_horaria}
+              {vaga.cidade} • {vaga.modalidade} •
+            </Text>
+            <Image
+              source={FIGMA_ICONS.work}
+              style={{ width: 13, height: 13, marginLeft: 2 }}
+              resizeMode="contain"
+            />
+            <Text style={[typography.caption, { color: colors.textMuted }]}>
+              {vaga.carga_horaria}
             </Text>
           </View>
         </View>
@@ -64,7 +78,11 @@ export default function DetalhesVagaHeaderCard({
             { backgroundColor: '#E8F0FE', borderColor: colors.primary },
           ]}
         >
-          <Text style={styles.statusBoxIcon}>📋</Text>
+          <Image
+            source={FIGMA_ICONS.jobDocument}
+            style={{ width: 22, height: 22, marginRight: 8 }}
+            resizeMode="contain"
+          />
           <View style={{ flex: 1 }}>
             <Text style={[styles.statusBoxTitle, { color: colors.primaryDark }]}>
               Sua Candidatura está em andamento

@@ -79,35 +79,35 @@ export default function ConfiguracoesPerfilScreen() {
           id: 'EDITAR_EMPRESA',
           title: 'Editar Perfil Institucional',
           description: 'Setor, localização, site, canais de contato e descrição no servidor',
-          icon: '🏢',
+          iconAsset: FIGMA_ASSETS.iconWork,
           action: () => navigate('INFORMACOES_EMPRESA'),
         },
         {
           id: 'PUBLICAR',
           title: 'Publicar Nova Vaga',
           description: 'Cadastrar nova oportunidade de emprego exclusiva PcD',
-          icon: '➕',
+          iconAsset: FIGMA_ASSETS.iconTabPublicar,
           action: () => navigate('PUBLICAR_VAGA_EMPRESA'),
         },
         {
           id: 'INSCRICOES',
           title: 'Gerenciar Inscrições',
           description: 'Visualizar candidatos e laudos homologados recebidos',
-          icon: '📋',
+          iconAsset: FIGMA_ASSETS.iconJobDocument,
           action: () => navigate('MINHAS_CANDIDATURAS'),
         },
         {
           id: 'AC11Y',
           title: 'Preferências de Acessibilidade',
           description: 'Voz alta (TTS), tamanho de fonte e alto contraste',
-          icon: '♿',
+          iconAsset: FIGMA_ASSETS.iconePcdAzul,
           action: () => setIsA11yModalOpen(true),
         },
         {
           id: 'PRIVACIDADE',
           title: 'Privacidade e Conformidade PcD',
           description: 'Conformidade com a Lei de Cotas nº 8.213/91 e LGPD',
-          icon: '🔒',
+          iconAsset: FIGMA_ASSETS.iconCheck,
           action: () =>
             Alert.alert(
               'Privacidade e Conformidade PcD',
@@ -118,7 +118,7 @@ export default function ConfiguracoesPerfilScreen() {
           id: 'SAIR',
           title: 'Sair da Conta',
           description: 'Encerrar sessão corporativa com segurança',
-          icon: '🚪',
+          iconAsset: FIGMA_ASSETS.iconArrowBack,
           action: handleLogoutAction,
         },
       ]
@@ -127,28 +127,28 @@ export default function ConfiguracoesPerfilScreen() {
           id: 'EDITAR',
           title: 'Editar Perfil',
           description: 'Nome, área de atuação, cidade, estado e foto',
-          icon: '👤',
+          iconAsset: FIGMA_ASSETS.iconJobDocument,
           action: () => navigate('EDITAR_PERFIL'),
         },
         {
           id: 'SECOES',
           title: 'Adicionar Seções ao Perfil',
           description: 'Formação acadêmica, cargos, sobre e competências',
-          icon: '➕',
+          iconAsset: FIGMA_ASSETS.iconTabPublicar,
           action: () => navigate('ADICIONAR_SECAO'),
         },
         {
           id: 'AC11Y',
           title: 'Preferências de Acessibilidade',
           description: 'Voz alta (TTS), tamanho de fonte e alto contraste',
-          icon: '♿',
+          iconAsset: FIGMA_ASSETS.iconePcdAzul,
           action: () => setIsA11yModalOpen(true),
         },
         {
           id: 'PRIVACIDADE',
           title: 'Privacidade e Laudo PcD',
           description: 'Gerenciar visibilidade do laudo médico para recrutadores',
-          icon: '🔒',
+          iconAsset: FIGMA_ASSETS.iconCheck,
           action: () =>
             Alert.alert(
               'Privacidade do Laudo PcD',
@@ -159,7 +159,7 @@ export default function ConfiguracoesPerfilScreen() {
           id: 'SAIR',
           title: 'Sair da Conta',
           description: 'Encerrar sessão com segurança',
-          icon: '🚪',
+          iconAsset: FIGMA_ASSETS.iconArrowBack,
           action: handleLogoutAction,
         },
       ];
@@ -266,7 +266,12 @@ export default function ConfiguracoesPerfilScreen() {
                   { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
                 ]}
               >
-                <Text style={styles.iconEmoji}>{item.icon}</Text>
+                <Image
+                  source={item.iconAsset}
+                  style={{ width: 20, height: 20, tintColor: colors.primaryDark }}
+                  resizeMode="contain"
+                  accessible={false}
+                />
               </View>
 
               <View style={styles.settingTextCol}>

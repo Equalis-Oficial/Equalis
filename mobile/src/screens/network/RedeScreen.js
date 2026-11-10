@@ -44,7 +44,6 @@ const ARTIGOS_FIQUE_POR_DENTRO = [
     tagColor: '#007ADE',
     titulo: 'Lei de Cotas (Lei nº 8.213/91): Entenda seus Direitos',
     tempoLeitura: '4 min de leitura',
-    icone: '⚖️',
     resumo:
       'Empresas com 100 ou mais empregados são obrigadas a preencher de 2% a 5% dos seus cargos com beneficiários reabilitados ou pessoas com deficiência.',
     detalhes:
@@ -57,7 +56,6 @@ const ARTIGOS_FIQUE_POR_DENTRO = [
     tagColor: '#2E7D32',
     titulo: 'Tecnologias Assistivas no Trabalho: O que a Empresa Deve Fornecer',
     tempoLeitura: '3 min de leitura',
-    icone: '💻',
     resumo:
       'Leitores de tela como NVDA e TalkBack, softwares ampliadores, periféricos adaptados e mesas ergonômicas fazem parte do direito à adaptação razoável garantido pela LBI.',
     detalhes:
@@ -70,7 +68,6 @@ const ARTIGOS_FIQUE_POR_DENTRO = [
     tagColor: '#E65100',
     titulo: 'Como Estruturar seu Currículo PcD e Homologação do Laudo CID',
     tempoLeitura: '5 min de leitura',
-    icone: '📝',
     resumo:
       'Saiba como destacar suas competências técnicas e descrever com clareza as adaptações de acessibilidade que você necessita durante a entrevista e o dia a dia.',
     detalhes:
@@ -83,7 +80,6 @@ const ARTIGOS_FIQUE_POR_DENTRO = [
     tagColor: '#512DA8',
     titulo: 'Feira Virtual de Empregabilidade Inclusiva Equalis 2026',
     tempoLeitura: 'Evento Gratuito',
-    icone: '🤝',
     resumo:
       'Conecte-se diretamente com recrutadores de tecnologia, finanças e serviços que possuem vagas afirmativas com suporte completo de acessibilidade.',
     detalhes:
@@ -407,7 +403,7 @@ export default function RedeScreen() {
                               { color: colors.textMuted, marginTop: 4 },
                             ]}
                           >
-                            🔗 {item.conexoes_em_comum} conexões em comum
+                            {item.conexoes_em_comum} conexões em comum
                           </Text>
                         </View>
                       </View>
@@ -461,7 +457,6 @@ export default function RedeScreen() {
                 },
               ]}
             >
-              <Text style={{ fontSize: 24, marginRight: 10 }}>💡</Text>
               <View style={{ flex: 1 }}>
                 <Text style={[typography.labelLarge, { color: colors.textPrimary, fontWeight: '700' }]}>
                   Dica de Conexão Inclusiva
@@ -477,7 +472,7 @@ export default function RedeScreen() {
           <View style={styles.fiquePorDentroContainer}>
             <View style={styles.fiquePorDentroHeader}>
               <Text style={[typography.titleMedium, { color: colors.textPrimary, fontWeight: '700' }]}>
-                📰 Notícias & Direitos PcD no Mercado
+                Notícias & Direitos PcD no Mercado
               </Text>
               <Text style={[typography.bodyMedium, { color: colors.textMuted, marginTop: 4 }]}>
                 Orientações práticas sobre a Lei de Cotas, tecnologias assistivas e eventos inclusivos.
@@ -514,7 +509,7 @@ export default function RedeScreen() {
                       { color: colors.textPrimary, fontWeight: '700', marginTop: 4 },
                     ]}
                   >
-                    {artigo.icone} {artigo.titulo}
+                    {artigo.titulo}
                   </Text>
 
                   <Text
@@ -548,7 +543,7 @@ export default function RedeScreen() {
                       style={styles.articleAudioBtn}
                     >
                       <Text style={[typography.labelMedium, { color: colors.primaryDark, fontWeight: '700' }]}>
-                        🔊 Ouvir Resumo
+                        Ouvir Resumo
                       </Text>
                     </TouchableOpacity>
 

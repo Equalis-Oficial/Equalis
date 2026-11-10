@@ -3,13 +3,14 @@
  * Isola a lógica de busca combinada (Categoria + Deficiência + Localidade + Palavra-chave).
  */
 import { useState, useMemo, useEffect } from 'react';
+import { FIGMA_ASSETS } from '../theme/figmaAssets';
 
 export const JOB_CATEGORIES = [
-  { id: 'TODAS', label: 'Todas', icon: '⭐' },
-  { id: 'Home-Office', label: 'Home-Office', icon: '🏠' },
-  { id: 'Atendimento', label: 'Atendimento', icon: '👥' },
-  { id: 'Programador', label: 'Programador', icon: '💻' },
-  { id: 'Marketing', label: 'Marketing', icon: '🎯' },
+  { id: 'TODAS', label: 'Todas', iconAsset: FIGMA_ASSETS.iconJobStar },
+  { id: 'Home-Office', label: 'Home-Office', iconAsset: FIGMA_ASSETS.iconTabHome },
+  { id: 'Atendimento', label: 'Atendimento', iconAsset: FIGMA_ASSETS.iconTabRede },
+  { id: 'Programador', label: 'Programador', iconAsset: FIGMA_ASSETS.iconWork },
+  { id: 'Marketing', label: 'Marketing', iconAsset: FIGMA_ASSETS.iconJobDocument },
 ];
 
 export function useFilteredJobs(vagas = [], candidatoPerfil = null, initialSearchTerm = '') {

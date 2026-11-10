@@ -7,7 +7,9 @@ import {
   StyleSheet,
   StatusBar,
   Modal,
+  Image,
 } from 'react-native';
+import { FIGMA_ICONS } from '../../theme/figmaAssets';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuthAndData } from '../../context/AuthAndDataContext';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
@@ -51,7 +53,11 @@ export default function DetalhesVagaScreen() {
           audioSummary="Nenhuma vaga selecionada no momento."
         />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-          <Text style={{ fontSize: 44, marginBottom: 12 }}>💼</Text>
+          <Image
+            source={FIGMA_ICONS.tabVagas}
+            style={{ width: 48, height: 48, marginBottom: 16, opacity: 0.7 }}
+            resizeMode="contain"
+          />
           <Text style={[typography.titleLarge, { color: colors.textPrimary, textAlign: 'center' }]}>
             Nenhuma Vaga Selecionada
           </Text>
@@ -228,7 +234,11 @@ export default function DetalhesVagaScreen() {
                   { backgroundColor: colors.surfaceTint, borderColor: colors.cardBorder },
                 ]}
               >
-                <Text style={styles.accessCheckIcon}>✅</Text>
+                <Image
+                  source={FIGMA_ICONS.check}
+                  style={{ width: 14, height: 14, marginRight: 8, tintColor: '#137333' }}
+                  resizeMode="contain"
+                />
                 <Text
                   style={[
                     typography.bodyMedium,
@@ -255,7 +265,7 @@ export default function DetalhesVagaScreen() {
                     { backgroundColor: '#E8F5E9', borderColor: '#81C784' },
                   ]}
                 >
-                  <Text style={styles.deficienciaPillText}>♿ {defNome}</Text>
+                  <Text style={styles.deficienciaPillText}>{defNome}</Text>
                 </View>
               ))}
             </View>
@@ -281,7 +291,6 @@ export default function DetalhesVagaScreen() {
                 { backgroundColor: colors.surfaceSoft, borderColor: colors.cardBorder },
               ]}
             >
-              <Text style={styles.linkExternoIcon}>🔗</Text>
               <Text style={[styles.linkExternoText, { color: colors.primaryDark }]}>
                 {vaga.link_externo}
               </Text>
@@ -363,9 +372,28 @@ export default function DetalhesVagaScreen() {
               { backgroundColor: '#FFFFFF', borderRadius: radius.lg },
             ]}
           >
-            <Text style={styles.modalEmoji}>
-              {feedbackModal.tipo === 'SUCESSO' ? '🎉' : '⚠️'}
-            </Text>
+            <View
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                backgroundColor: feedbackModal.tipo === 'SUCESSO' ? '#E6F4EA' : '#FEE2E2',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 16,
+                alignSelf: 'center',
+              }}
+            >
+              {feedbackModal.tipo === 'SUCESSO' ? (
+                <Image
+                  source={FIGMA_ICONS.check}
+                  style={{ width: 26, height: 26, tintColor: '#137333' }}
+                  resizeMode="contain"
+                />
+              ) : (
+                <Text style={{ fontSize: 24, fontWeight: '800', color: colors.danger }}>!</Text>
+              )}
+            </View>
 
             <Text
               accessibilityRole="header"
