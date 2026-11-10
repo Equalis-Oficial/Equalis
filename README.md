@@ -1,3 +1,12 @@
+
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/e6b77157-ac82-4c5b-acd1-a9f122a20a50"
+    alt="Logo Equalis"
+    width="200"
+  />
+</p>
+
 # Equalis
 
 **Plataforma Mobile de Empregabilidade para Pessoas com Deficiência (PcD)**
