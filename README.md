@@ -98,34 +98,14 @@ Abra o Expo Go e escaneie o QR Code.
 
 ## Estrutura do projeto
 
-```text
-Equalis/
-├── backend/
-│   ├── database/         # Estrutura e dados do MySQL
-│   └── src/
-│       ├── config/       # Configuração do banco
-│       ├── controllers/  # Requisições HTTP
-│       ├── services/     # Regras de negócio
-│       ├── repositories/ # Consultas SQL
-│       ├── middlewares/  # Autenticação e erros
-│       ├── routes/       # Rotas da API
-│       └── tests/        # Testes automatizados
-│
-├── mobile/
-│   ├── assets/           # Imagens e recursos visuais
-│   ├── src/
-│   │   ├── components/   # Componentes reutilizáveis
-│   │   ├── context/      # Estados globais
-│   │   ├── hooks/        # Hooks personalizados
-│   │   ├── screens/      # Telas do aplicativo
-│   │   ├── services/     # Comunicação com a API
-│   │   └── theme/        # Cores e tipografia
-│   └── metro.config.js
-│
-├── docker-compose.yml
-├── start.sh
-└── package.json
-```
+<p align="center">
+  <img
+    src="URL_DA_IMAGEM"
+    alt="Estrutura do Projeto Equalis"
+    width="900"
+  />
+</p>
+
 
 ## Funcionalidades
 
