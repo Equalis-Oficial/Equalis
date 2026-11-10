@@ -100,11 +100,14 @@ Abra o Expo Go e escaneie o QR Code.
 
 <p align="center">
   <img
-    src="https://github.com/user-attachments/assets/55dfbac4-5011-43d2-a76a-a69005a8d640"
+    src="https://github.com/user-attachments/assets/663b565a-fe6f-4b08-8f94-6ebbab0bd003"
     alt="Estrutura do Projeto Equalis"
     width="900"
   />
 </p>
+
+
+
 
 
 ## Funcionalidades
