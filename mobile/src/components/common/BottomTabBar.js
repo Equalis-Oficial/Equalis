@@ -16,7 +16,7 @@ const TABS_EMPRESA = [
   { id: 'VAGAS', label: 'Vagas', icon: '💼', target: 'EMPREGO' },
   { id: 'PUBLICAR', label: '+ Criar Vaga', icon: '➕', target: 'PUBLICAR_VAGA_EMPRESA' },
   { id: 'NOTIFICACOES', label: 'Notificações', icon: '🔔', target: 'NOTIFICACOES' },
-  { id: 'PERFIL', label: 'Empresa', icon: '🏢', target: 'PERFIL_CANDIDATO' },
+  { id: 'PERFIL', label: 'Empresa', icon: '🏢', target: 'PERFIL_EMPRESA' },
 ];
 
 export default function BottomTabBar({ activeTab = 'HOME' }) {

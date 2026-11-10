@@ -78,13 +78,9 @@ export default function ConfiguracoesPerfilScreen() {
         {
           id: 'EDITAR_EMPRESA',
           title: 'Editar Perfil Institucional',
-          description: 'Nome fantasia, descrição institucional e dados no MySQL',
+          description: 'Setor, localização, site, canais de contato e descrição no servidor',
           icon: '🏢',
-          action: () => {
-            setEmpresaNome(empresaPerfil?.nome_fantasia || '');
-            setEmpresaDescricao(empresaPerfil?.descricao || '');
-            setModalEmpresaVisible(true);
-          },
+          action: () => navigate('INFORMACOES_EMPRESA'),
         },
         {
           id: 'PUBLICAR',
@@ -185,7 +181,7 @@ export default function ConfiguracoesPerfilScreen() {
       <AccessibleHeader
         title={isEmpresa ? 'Configurações da Empresa' : 'Configurações do Perfil'}
         showBack={true}
-        onBack={() => goBack('PERFIL_CANDIDATO')}
+        onBack={() => goBack(isEmpresa ? 'PERFIL_EMPRESA' : 'PERFIL_CANDIDATO')}
         audioSummary={audioSummary}
       />
 

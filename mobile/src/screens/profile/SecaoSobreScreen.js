@@ -15,11 +15,22 @@ import AccessibleButton from '../../components/common/AccessibleButton';
 
 export default function SecaoSobreScreen() {
   const { theme, isAccessibleMode, speak } = useAccessibility();
-  const { candidatoPerfil, atualizarCandidatoPerfil, navigate, goBack } = useAuthAndData();
+  const {
+    candidatoPerfil,
+    empresaPerfil,
+    userType,
+    atualizarCandidatoPerfil,
+    atualizarEmpresaPerfil,
+    navigate,
+    goBack,
+  } = useAuthAndData();
   const { colors, typography, radius } = theme;
+  const isEmpresa = userType === 'EMPRESA';
 
-  const [resumo, setResumo] = useState(candidatoPerfil.resumo_profissional || '');
-  const [competencias, setCompetencias] = useState(candidatoPerfil.competencias || []);
+  const [resumo, setResumo] = useState(
+    isEmpresa ? (empresaPerfil?.descricao || '') : (candidatoPerfil?.resumo_profissional || '')
+  );
+  const [competencias, setCompetencias] = useState(candidatoPerfil?.competencias || []);
   const [novaCompetencia, setNovaCompetencia] = useState('');
 
   const MAX_CHARS = 2600;
@@ -40,24 +51,36 @@ export default function SecaoSobreScreen() {
   };
 
   const handleSalvar = () => {
-    atualizarCandidatoPerfil({
-      resumo_profissional: resumo,
-      competencias,
-    });
-    Alert.alert('Sucesso', 'Seção Sobre atualizada com sucesso!', [
-      { text: 'OK', onPress: () => goBack('PERFIL_CANDIDATO') },
-    ]);
+    if (isEmpresa) {
+      atualizarEmpresaPerfil({
+        descricao: resumo.trim(),
+      });
+      speak('Descrição institucional da empresa salva com sucesso!');
+      Alert.alert('Sucesso', 'Descrição da empresa atualizada com sucesso!', [
+        { text: 'OK', onPress: () => goBack('PERFIL_EMPRESA') },
+      ]);
+    } else {
+      atualizarCandidatoPerfil({
+        resumo_profissional: resumo,
+        competencias,
+      });
+      speak('Seção sobre atualizada com sucesso!');
+      Alert.alert('Sucesso', 'Seção Sobre atualizada com sucesso!', [
+        { text: 'OK', onPress: () => goBack('PERFIL_CANDIDATO') },
+      ]);
+    }
   };
 
-  const audioSummary =
-    'Tela Seção Sobre. Escreva sobre sua experiência, setor ou competências em até 2600 caracteres e adicione competências destacadas.';
+  const audioSummary = isEmpresa
+    ? 'Tela Seção Sobre a Empresa. Descreva a história, cultura inclusiva e ações afirmativas da sua organização em até 2600 caracteres.'
+    : 'Tela Seção Sobre. Escreva sobre sua experiência, setor ou competências em até 2600 caracteres e adicione competências destacadas.';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <AccessibleHeader
-        title="Seção Sobre"
+        title={isEmpresa ? 'Sobre a Empresa' : 'Seção Sobre'}
         showBack={true}
-        onBack={() => goBack('PERFIL_CANDIDATO')}
+        onBack={() => goBack(isEmpresa ? 'PERFIL_EMPRESA' : 'PERFIL_CANDIDATO')}
         audioSummary={audioSummary}
       />
 
@@ -95,7 +118,7 @@ export default function SecaoSobreScreen() {
         <View style={styles.inputSection}>
           <View style={styles.charCountRow}>
             <Text style={[typography.caption, { color: colors.textSecondary, fontWeight: '600' }]}>
-              Resumo Profissional
+              {isEmpresa ? 'Descrição Institucional' : 'Resumo Profissional'}
             </Text>
             <Text
               style={[
@@ -123,7 +146,11 @@ export default function SecaoSobreScreen() {
             <TextInput
               value={resumo}
               onChangeText={setResumo}
-              placeholder="Ex: Profissional de Marketing Digital e Comunicação Acessível com foco em campanhas inclusivas..."
+              placeholder={
+                isEmpresa
+                  ? 'Descreva a história, iniciativas de acessibilidade, suporte à inclusão e compromisso com a Lei de Cotas da organização...'
+                  : 'Ex: Profissional de Marketing Digital e Comunicação Acessível com foco em campanhas inclusivas...'
+              }
               placeholderTextColor={colors.textMuted}
               multiline={true}
               numberOfLines={8}
@@ -134,87 +161,89 @@ export default function SecaoSobreScreen() {
                 { color: colors.textPrimary, textAlignVertical: 'top' },
               ]}
               accessible={true}
-              accessibilityLabel="Campo de texto do resumo profissional"
+              accessibilityLabel={isEmpresa ? 'Campo de texto da descrição da empresa' : 'Campo de texto do resumo profissional'}
             />
           </View>
         </View>
 
-        {/* Competências em Destaque */}
-        <View style={styles.competenciasSection}>
-          <Text
-            style={[
-              typography.titleMedium,
-              { color: colors.textPrimary, fontWeight: '700', marginBottom: 6 },
-            ]}
-            accessibilityRole="header"
-          >
-            Competências em Destaque
-          </Text>
-          <Text style={[typography.bodyMedium, { color: colors.textMuted, marginBottom: 12 }]}>
-            Adicione palavras-chave para que recrutadores encontrem seu perfil mais facilmente.
-          </Text>
-
-          {/* Input para adicionar nova competência */}
-          <View style={styles.addChipRow}>
-            <TextInput
-              value={novaCompetencia}
-              onChangeText={setNovaCompetencia}
-              placeholder="Ex: Libras, Python, WCAG..."
-              placeholderTextColor={colors.textMuted}
+        {/* Competências em Destaque (Apenas Candidato) */}
+        {!isEmpresa && (
+          <View style={styles.competenciasSection}>
+            <Text
               style={[
-                styles.addChipInput,
-                typography.bodyMedium,
-                {
-                  backgroundColor: colors.inputBg,
-                  borderColor: colors.cardBorder,
-                  borderRadius: radius.sm,
-                  color: colors.textPrimary,
-                },
+                typography.titleMedium,
+                { color: colors.textPrimary, fontWeight: '700', marginBottom: 6 },
               ]}
-              onSubmitEditing={handleAddCompetencia}
-              accessible={true}
-              accessibilityLabel="Campo para digitar nova competência"
-            />
-            <TouchableOpacity
-              onPress={handleAddCompetencia}
-              accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel="Adicionar competência digitada"
-              style={[
-                styles.addChipBtn,
-                { backgroundColor: colors.primaryDark, borderRadius: radius.sm },
-              ]}
+              accessibilityRole="header"
             >
-              <Text style={styles.addChipBtnText}>+ Inserir</Text>
-            </TouchableOpacity>
-          </View>
+              Competências em Destaque
+            </Text>
+            <Text style={[typography.bodyMedium, { color: colors.textMuted, marginBottom: 12 }]}>
+              Adicione palavras-chave para que recrutadores encontrem seu perfil mais facilmente.
+            </Text>
 
-          {/* Lista de Chips */}
-          <View style={styles.chipsContainer}>
-            {competencias.map((comp, idx) => (
-              <View
-                key={idx}
+            {/* Input para adicionar nova competência */}
+            <View style={styles.addChipRow}>
+              <TextInput
+                value={novaCompetencia}
+                onChangeText={setNovaCompetencia}
+                placeholder="Ex: Libras, Python, WCAG..."
+                placeholderTextColor={colors.textMuted}
                 style={[
-                  styles.chipItem,
-                  { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
+                  styles.addChipInput,
+                  typography.bodyMedium,
+                  {
+                    backgroundColor: colors.inputBg,
+                    borderColor: colors.cardBorder,
+                    borderRadius: radius.sm,
+                    color: colors.textPrimary,
+                  },
+                ]}
+                onSubmitEditing={handleAddCompetencia}
+                accessible={true}
+                accessibilityLabel="Campo para digitar nova competência"
+              />
+              <TouchableOpacity
+                onPress={handleAddCompetencia}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Adicionar competência digitada"
+                style={[
+                  styles.addChipBtn,
+                  { backgroundColor: colors.primaryDark, borderRadius: radius.sm },
                 ]}
               >
-                <Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '600' }]}>
-                  {comp}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => handleRemoveCompetencia(comp)}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Remover competência ${comp}`}
-                  style={styles.chipRemoveBtn}
+                <Text style={styles.addChipBtnText}>+ Inserir</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Lista de Chips */}
+            <View style={styles.chipsContainer}>
+              {competencias.map((comp, idx) => (
+                <View
+                  key={idx}
+                  style={[
+                    styles.chipItem,
+                    { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
+                  ]}
                 >
-                  <Text style={[styles.chipRemoveText, { color: colors.danger }]}>✕</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+                  <Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '600' }]}>
+                    {comp}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveCompetencia(comp)}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Remover competência ${comp}`}
+                    style={styles.chipRemoveBtn}
+                  >
+                    <Text style={[styles.chipRemoveText, { color: colors.danger }]}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Botão Salvar */}
         <View style={styles.saveBtnWrap}>

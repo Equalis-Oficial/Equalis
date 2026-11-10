@@ -33,6 +33,14 @@ async function login({ email, senha, tipo = 'CANDIDATO' }) {
         cnpj: empresa.cnpj,
         email: empresa.email,
         descricao: empresa.descricao,
+        setor: empresa.setor,
+        localizacao: empresa.localizacao,
+        cidade: empresa.cidade,
+        estado: empresa.estado,
+        site: empresa.site,
+        telefone: empresa.telefone,
+        logo_url: empresa.logo_url,
+        banner_url: empresa.banner_url,
       },
     };
   }

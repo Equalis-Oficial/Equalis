@@ -26,6 +26,8 @@ export default function DetalhesVagaScreen() {
     navigate,
     goBack,
     deficiencias,
+    userType,
+    empresaPerfil,
   } = useAuthAndData();
   const { colors, typography, radius } = theme;
 
@@ -303,29 +305,45 @@ export default function DetalhesVagaScreen() {
             <Text style={styles.footerBtnText}>VOLTAR</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handleCandidatar}
-            accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel={
-              candidaturaExistente
-                ? `Candidatura ativa. Status ${candidaturaExistente.status_processo}. Toque para cancelar candidatura`
-                : 'Candidatar-se agora a esta vaga de emprego'
-            }
-            style={[
-              styles.footerBtn,
-              styles.candidatarBtn,
-              {
-                backgroundColor: candidaturaExistente
-                  ? colors.danger
-                  : colors.primaryDark,
-              },
-            ]}
-          >
-            <Text style={styles.footerBtnText}>
-              {candidaturaExistente ? 'CANCELAR CANDIDATURA' : 'CANDIDATAR-SE AGORA'}
-            </Text>
-          </TouchableOpacity>
+          {userType === 'EMPRESA' ? (
+            <TouchableOpacity
+              onPress={() => navigate('MINHAS_CANDIDATURAS')}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Ver candidatos inscritos para esta oportunidade"
+              style={[
+                styles.footerBtn,
+                styles.candidatarBtn,
+                { backgroundColor: colors.primaryDark },
+              ]}
+            >
+              <Text style={styles.footerBtnText}>VER CANDIDATURAS</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={handleCandidatar}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={
+                candidaturaExistente
+                  ? `Candidatura ativa. Status ${candidaturaExistente.status_processo}. Toque para cancelar candidatura`
+                  : 'Candidatar-se agora a esta vaga de emprego'
+              }
+              style={[
+                styles.footerBtn,
+                styles.candidatarBtn,
+                {
+                  backgroundColor: candidaturaExistente
+                    ? colors.danger
+                    : colors.primaryDark,
+                },
+              ]}
+            >
+              <Text style={styles.footerBtnText}>
+                {candidaturaExistente ? 'CANCELAR CANDIDATURA' : 'CANDIDATAR-SE AGORA'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
 

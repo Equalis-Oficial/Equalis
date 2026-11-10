@@ -128,7 +128,7 @@ export default function InformacoesEmpresaScreen() {
       <AccessibleHeader
         title="Informações da Empresa"
         showBack={true}
-        onBack={() => goBack('ADICIONAR_SECAO')}
+        onBack={() => goBack('CONFIGURACOES_PERFIL')}
         audioSummary={audioSummary}
       />
 

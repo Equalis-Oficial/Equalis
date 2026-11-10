@@ -111,7 +111,7 @@ export default function AccessibleHeader({
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              onPress={() => navigate('PERFIL_CANDIDATO')}
+              onPress={() => navigate(userType === 'EMPRESA' ? 'PERFIL_EMPRESA' : 'PERFIL_CANDIDATO')}
               accessible={true}
               accessibilityRole="button"
               accessibilityLabel={userType === 'EMPRESA' ? `Abrir perfil de ${empresaPerfil?.nome_fantasia || 'Empresa'}` : `Abrir meu perfil de candidato`}

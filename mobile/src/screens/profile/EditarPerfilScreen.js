@@ -14,10 +14,15 @@ import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 import AccessibleHeader from '../../components/common/AccessibleHeader';
 import AccessibleInput from '../../components/common/AccessibleInput';
 import AccessibleButton from '../../components/common/AccessibleButton';
+import InformacoesEmpresaScreen from './InformacoesEmpresaScreen';
 
 export default function EditarPerfilScreen() {
   const { theme, isAccessibleMode, speak } = useAccessibility();
-  const { candidatoPerfil, atualizarCandidatoPerfil, goBack } = useAuthAndData();
+  const { candidatoPerfil, atualizarCandidatoPerfil, goBack, userType } = useAuthAndData();
+
+  if (userType === 'EMPRESA') {
+    return <InformacoesEmpresaScreen />;
+  }
   const { colors, typography, radius } = theme;
 
   const [nome, setNome] = useState(candidatoPerfil.nome || '');

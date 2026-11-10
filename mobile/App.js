@@ -128,6 +128,7 @@ function ScreenRouter() {
       // Frente 3
       case 'HOME':
         return <HomeScreen />;
+      case 'PERFIL_EMPRESA':
       case 'PERFIL_CANDIDATO':
         return <PerfilCandidatoScreen />;
       case 'CONFIGURACOES_PERFIL':
