@@ -114,7 +114,7 @@ export default function PerfilCandidatoScreen() {
 
   const audioSummary = isEmpresa
     ? `Perfil Institucional de ${empresaPerfil?.nome_fantasia || 'Empresa Inclusiva'}. CNPJ: ${empresaPerfil?.cnpj || 'Não informado'}. A instituição possui ${vagasDaEmpresa.length} vagas ativas cadastradas e está comprometida com a inclusão de profissionais PcD.`
-    : `Perfil de ${candidatoPerfil.nome || 'Candidato'}, atuando na área de ${candidatoPerfil.area_atuacao || 'Geral'}${candidatoPerfil.cidade ? ` em ${candidatoPerfil.cidade}, ${candidatoPerfil.estado}` : ''}. Possui ${candidatoPerfil.conexoesCount || 0} conexões. Veja abaixo suas formações acadêmicas, experiências profissionais e publicações.`;
+    : `Perfil de ${candidatoPerfil?.nome || 'Candidato'}, atuando na área de ${candidatoPerfil?.area_atuacao || 'Geral'}${candidatoPerfil?.cidade ? ` em ${candidatoPerfil.cidade}, ${candidatoPerfil?.estado || 'DF'}` : ''}. Possui ${candidatoPerfil?.conexoesCount || 0} conexões. Veja abaixo suas formações acadêmicas, experiências profissionais e publicações.`;
 
   const postsDoUsuario = (publicacoes || []).filter((p) =>
     isEmpresa
@@ -272,8 +272,8 @@ export default function PerfilCandidatoScreen() {
 
             {/* SEÇÃO SOBRE */}
             <PerfilSecaoSobre
-              resumoProfissional={candidatoPerfil.resumo_profissional}
-              competencias={candidatoPerfil.competencias}
+              resumoProfissional={candidatoPerfil?.resumo_profissional || ''}
+              competencias={candidatoPerfil?.competencias || []}
               onNavigateSobre={() => navigate('SECAO_SOBRE')}
               colors={colors}
               typography={typography}
@@ -283,7 +283,7 @@ export default function PerfilCandidatoScreen() {
             <View style={[styles.sectionDivider, { backgroundColor: colors.dividerBeige }]} />
 
             {/* SEÇÃO SERVIÇOS (Se houver) */}
-            {candidatoPerfil.servicos && candidatoPerfil.servicos.length > 0 ? (
+            {candidatoPerfil?.servicos && candidatoPerfil.servicos.length > 0 ? (
               <>
                 <View style={styles.sectionContainer}>
                   <Text
@@ -296,7 +296,7 @@ export default function PerfilCandidatoScreen() {
                     Serviços Prestados
                   </Text>
                   <View style={styles.chipsWrap}>
-                    {candidatoPerfil.servicos.map((serv, idx) => (
+                    {(candidatoPerfil?.servicos || []).map((serv, idx) => (
                       <View
                         key={idx}
                         style={[

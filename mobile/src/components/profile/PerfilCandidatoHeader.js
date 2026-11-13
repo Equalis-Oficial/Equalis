@@ -55,7 +55,7 @@ export default function PerfilCandidatoHeader({
             source={FIGMA_ASSETS.avatarPandaRaposa}
             style={styles.avatarImg}
             accessible={true}
-            accessibilityLabel={`Foto de perfil de ${candidatoPerfil.nome}`}
+            accessibilityLabel={`Foto de perfil de ${candidatoPerfil?.nome || 'Candidato'}`}
           />
           <View
             style={[
@@ -80,7 +80,7 @@ export default function PerfilCandidatoHeader({
           ]}
           accessibilityRole="header"
         >
-          {candidatoPerfil.nome || 'Meu Perfil'}
+          {candidatoPerfil?.nome || 'Meu Perfil'}
         </Text>
 
         <Text
@@ -89,7 +89,7 @@ export default function PerfilCandidatoHeader({
             { color: colors.primaryDark, marginTop: 4, fontWeight: '600' },
           ]}
         >
-          {candidatoPerfil.area_atuacao || 'Profissional PcD'}
+          {candidatoPerfil?.area_atuacao || 'Profissional PcD'}
         </Text>
 
         <Text
@@ -98,7 +98,7 @@ export default function PerfilCandidatoHeader({
             { color: colors.textMuted, marginTop: 4 },
           ]}
         >
-          {[candidatoPerfil.cidade, candidatoPerfil.estado, candidatoPerfil.pais].filter(Boolean).join(', ') || 'Brasil'}
+          {[candidatoPerfil?.cidade, candidatoPerfil?.estado, candidatoPerfil?.pais].filter(Boolean).join(', ') || 'Brasil'}
         </Text>
 
         {/* Link Informações de Contato e Conexões */}
@@ -127,7 +127,7 @@ export default function PerfilCandidatoHeader({
             onPress={onNavigateRede}
             accessible={true}
             accessibilityRole="button"
-            accessibilityLabel={`Ver conexões. ${candidatoPerfil.conexoesCount || 0} conexões`}
+            accessibilityLabel={`Ver conexões. ${candidatoPerfil?.conexoesCount || 0} conexões`}
           >
             <Text
               style={[
@@ -135,7 +135,7 @@ export default function PerfilCandidatoHeader({
                 { color: colors.primaryDark, fontWeight: '700' },
               ]}
             >
-              {candidatoPerfil.conexoesCount || 0} conexões
+              {candidatoPerfil?.conexoesCount || 0} conexões
             </Text>
           </TouchableOpacity>
         </View>
@@ -147,7 +147,7 @@ export default function PerfilCandidatoHeader({
             { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
           ]}
           accessible={true}
-          accessibilityLabel={`Disponível para: ${candidatoPerfil.disponivelPara || 'Oportunidades Inclusivas'}`}
+          accessibilityLabel={`Disponível para: ${candidatoPerfil?.disponivelPara || 'Oportunidades Inclusivas'}`}
         >
           <View
             style={{
@@ -164,7 +164,7 @@ export default function PerfilCandidatoHeader({
               { color: colors.primaryDark, fontWeight: '700', flex: 1 },
             ]}
           >
-            Disponível para: {candidatoPerfil.disponivelPara || 'Oportunidades Inclusivas'}
+            Disponível para: {candidatoPerfil?.disponivelPara || 'Oportunidades Inclusivas'}
           </Text>
         </View>
 

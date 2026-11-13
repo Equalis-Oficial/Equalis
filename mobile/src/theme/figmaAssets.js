@@ -58,3 +58,47 @@ export const FIGMA_ASSETS = {
   iconJobTime: require('../../assets/figma/icon_job_time.png'),
 };
 
+export const FIGMA_ICONS = {
+  // Aliases canônicos (sem prefixo icon)
+  tabHome: FIGMA_ASSETS.iconTabHome,
+  tabRede: FIGMA_ASSETS.iconTabRede,
+  tabPublicar: FIGMA_ASSETS.iconTabPublicar,
+  tabNotificacoes: FIGMA_ASSETS.iconTabNotificacoes,
+  tabVagas: FIGMA_ASSETS.iconTabVagas,
+  search: FIGMA_ASSETS.iconSearch,
+  chatBubble: FIGMA_ASSETS.iconChatBubble,
+  settingsGear: FIGMA_ASSETS.iconSettingsGear,
+  location: FIGMA_ASSETS.iconLocation,
+  work: FIGMA_ASSETS.iconWork,
+  check: FIGMA_ASSETS.iconCheck,
+  arrowBack: FIGMA_ASSETS.iconArrowBack,
+  postLike: FIGMA_ASSETS.iconPostLike,
+  postComment: FIGMA_ASSETS.iconPostComment,
+  postShare: FIGMA_ASSETS.iconPostShare,
+  jobDocument: FIGMA_ASSETS.iconJobDocument,
+  jobCash: FIGMA_ASSETS.iconJobCash,
+  jobStar: FIGMA_ASSETS.iconJobStar,
+  jobTime: FIGMA_ASSETS.iconJobTime,
+
+  // Aliases com prefixo icon (para máxima compatibilidade)
+  iconTabHome: FIGMA_ASSETS.iconTabHome,
+  iconTabRede: FIGMA_ASSETS.iconTabRede,
+  iconTabPublicar: FIGMA_ASSETS.iconTabPublicar,
+  iconTabNotificacoes: FIGMA_ASSETS.iconTabNotificacoes,
+  iconTabVagas: FIGMA_ASSETS.iconTabVagas,
+  iconSearch: FIGMA_ASSETS.iconSearch,
+  iconChatBubble: FIGMA_ASSETS.iconChatBubble,
+  iconSettingsGear: FIGMA_ASSETS.iconSettingsGear,
+  iconLocation: FIGMA_ASSETS.iconLocation,
+  iconWork: FIGMA_ASSETS.iconWork,
+  iconCheck: FIGMA_ASSETS.iconCheck,
+  iconArrowBack: FIGMA_ASSETS.iconArrowBack,
+  iconPostLike: FIGMA_ASSETS.iconPostLike,
+  iconPostComment: FIGMA_ASSETS.iconPostComment,
+  iconPostShare: FIGMA_ASSETS.iconPostShare,
+  iconJobDocument: FIGMA_ASSETS.iconJobDocument,
+  iconJobCash: FIGMA_ASSETS.iconJobCash,
+  iconJobStar: FIGMA_ASSETS.iconJobStar,
+  iconJobTime: FIGMA_ASSETS.iconJobTime,
+};
+
