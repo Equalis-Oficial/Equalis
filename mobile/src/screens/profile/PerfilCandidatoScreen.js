@@ -177,18 +177,18 @@ export default function PerfilCandidatoScreen() {
                   'Empresa inclusiva comprometida com a acessibilidade e a contratação afirmativa de profissionais PcD sob a Lei nº 8.213/91.'}
               </Text>
 
-              {((empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC') || empresaPerfil?.id === 1) ? (
+              {(empresaPerfil?.nome_fantasia || '').toUpperCase().includes('UNICEPLAC') ? (
                 <View style={{ marginTop: 14, gap: 8 }}>
                   <View style={styles.empresaA11yResource}>
                     <Image source={FIGMA_ASSETS.iconePcdAzul} style={{ width: 16, height: 16, marginRight: 8 }} resizeMode="contain" />
                     <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
-                      Rampas, banheiros acessíveis e elevadores em todos os blocos
+                      Rampas, banheiros acessíveis e elevadores adaptados
                     </Text>
                   </View>
                   <View style={styles.empresaA11yResource}>
                     <Image source={FIGMA_ASSETS.iconChatBubble} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                     <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
-                      Intérprete de Libras no campus e suporte ao colaborador
+                      Intérprete de Libras e suporte ao colaborador
                     </Text>
                   </View>
                   <View style={styles.empresaA11yResource}>
@@ -200,6 +200,16 @@ export default function PerfilCandidatoScreen() {
                 </View>
               ) : (
                 <View style={{ marginTop: 14, gap: 8 }}>
+                  {Array.isArray(empresaPerfil?.recursos_acessibilidade) && empresaPerfil.recursos_acessibilidade.length > 0 ? (
+                    empresaPerfil.recursos_acessibilidade.map((rec, idx) => (
+                      <View key={idx} style={styles.empresaA11yResource}>
+                        <Image source={FIGMA_ASSETS.iconePcdAzul} style={{ width: 16, height: 16, marginRight: 8 }} resizeMode="contain" />
+                        <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
+                          {rec}
+                        </Text>
+                      </View>
+                    ))
+                  ) : null}
                   {empresaPerfil?.setor ? (
                     <View style={styles.empresaA11yResource}>
                       <Image source={FIGMA_ASSETS.iconWork} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
@@ -208,11 +218,11 @@ export default function PerfilCandidatoScreen() {
                       </Text>
                     </View>
                   ) : null}
-                  {empresaPerfil?.localizacao ? (
+                  {empresaPerfil?.localizacao || empresaPerfil?.cidade ? (
                     <View style={styles.empresaA11yResource}>
                       <Image source={FIGMA_ASSETS.iconLocation} style={{ width: 16, height: 16, marginRight: 8, tintColor: colors.primary }} resizeMode="contain" />
                       <Text style={[typography.bodyMedium, { color: colors.textPrimary, flex: 1 }]}>
-                        Localização: {empresaPerfil.localizacao}
+                        Localização: {empresaPerfil.localizacao || `${empresaPerfil.cidade || ''}${empresaPerfil.estado ? ' - ' + empresaPerfil.estado : ''}`}
                       </Text>
                     </View>
                   ) : null}

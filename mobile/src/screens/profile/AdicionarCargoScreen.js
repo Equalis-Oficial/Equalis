@@ -204,7 +204,7 @@ export default function AdicionarCargoScreen() {
           label="Organização / Empresa"
           value={organizacao}
           onChangeText={setOrganizacao}
-          placeholder="Ex: Centro Universitário UNICEPLAC"
+          placeholder="Ex: Nome da Empresa ou Organização"
           required={true}
           error={erros.organizacao}
         />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -93,15 +93,25 @@ export default function RedeScreen() {
   const { colors, typography, radius } = theme;
 
   const [activeTab, setActiveTab] = useState('AMPLIE'); // 'AMPLIE' | 'FIQUE_POR_DENTRO'
+  const [filtroConexoes, setFiltroConexoes] = useState('TODAS'); // 'TODAS' | 'CONECTADAS'
   const [accessibleIndex, setAccessibleIndex] = useState(0);
   const [expandedArticleId, setExpandedArticleId] = useState(null);
 
   const totalMinhasConexoes =
-    typeof candidatoPerfil?.conexoesCount === 'number' ? candidatoPerfil.conexoesCount : 0;
+    (conexoes || []).filter((c) => c.conectado).length ||
+    (typeof candidatoPerfil?.conexoesCount === 'number' ? candidatoPerfil.conexoesCount : 0);
 
-  const totalContatos = (conexoes || []).length;
+  const contatosFiltrados = useMemo(() => {
+    if (!Array.isArray(conexoes)) return [];
+    if (filtroConexoes === 'CONECTADAS') {
+      return conexoes.filter((c) => c.conectado);
+    }
+    return conexoes;
+  }, [conexoes, filtroConexoes]);
+
+  const totalContatos = (contatosFiltrados || []).length;
   const currentAccessibleContact =
-    totalContatos > 0 ? conexoes[accessibleIndex % totalContatos] : null;
+    totalContatos > 0 ? contatosFiltrados[accessibleIndex % totalContatos] : null;
 
   const handleProximoAcessivel = () => {
     if (totalContatos === 0) return;
@@ -206,27 +216,45 @@ export default function RedeScreen() {
       >
         {activeTab === 'AMPLIE' ? (
           <>
-            {/* Link / Resumo de Conexões Existentes (#286:324 do Figma) */}
-            <View style={styles.myConnectionsRow}>
+            {/* Link / Resumo de Conexões Existentes Interativo (#286:324 do Figma) */}
+            <TouchableOpacity
+              onPress={() => setFiltroConexoes((prev) => (prev === 'CONECTADAS' ? 'TODAS' : 'CONECTADAS'))}
+              activeOpacity={0.8}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`Filtro de conexões: ${filtroConexoes === 'CONECTADAS' ? 'Exibindo apenas conexões ativas' : 'Exibindo todas as sugestões'}. Total de ${totalMinhasConexoes} conexões ativas`}
+              style={styles.myConnectionsRow}
+            >
               <Text
                 style={[
                   typography.titleMedium,
                   { color: colors.textPrimary, fontWeight: '700' },
                 ]}
               >
-                Ver suas conexões ({totalMinhasConexoes})
+                {filtroConexoes === 'CONECTADAS' ? 'Minhas Conexões Ativas' : 'Ver suas conexões'} ({totalMinhasConexoes})
               </Text>
               <View
                 style={[
                   styles.connectionsBadge,
-                  { backgroundColor: colors.surfaceTint, borderColor: colors.primary },
+                  {
+                    backgroundColor: filtroConexoes === 'CONECTADAS' ? colors.primaryDark : colors.surfaceTint,
+                    borderColor: colors.primaryDark,
+                  },
                 ]}
               >
-                <Text style={[typography.caption, { color: colors.primaryDark, fontWeight: '700' }]}>
-                  Ativa
+                <Text
+                  style={[
+                    typography.caption,
+                    {
+                      color: filtroConexoes === 'CONECTADAS' ? '#FFFFFF' : colors.primaryDark,
+                      fontWeight: '700',
+                    },
+                  ]}
+                >
+                  {filtroConexoes === 'CONECTADAS' ? 'Filtradas' : 'Ativa'}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
 
             {/* MODO ACESSÍVEL (#372:616 e 29_REDE_ACESSIVEL.png) */}
             {isAccessibleMode ? (
@@ -349,101 +377,124 @@ export default function RedeScreen() {
               ) : null
             ) : (
               /* MODO PADRÃO COMPLETO (#232:168 e 25_REDE_PADRAO.png) */
-              <View style={styles.contactsGrid}>
-                {conexoes.map((item) => {
-                  return (
-                    <View
-                      key={item.id}
-                      style={[
-                        styles.contactCard,
-                        {
-                          backgroundColor: colors.background,
-                          borderColor: colors.cardBorder,
-                          borderRadius: radius.md,
-                        },
-                      ]}
-                    >
-                      <View style={styles.contactCardTop}>
-                        {/* Foto Real de Cada Contato */}
-                        <View
-                          style={[
-                            styles.contactAvatarWrap,
-                            { borderColor: colors.primary },
-                          ]}
-                        >
-                          <Image
-                            source={getContactAvatar(item)}
-                            style={styles.contactAvatarImg}
-                            accessible={true}
-                            accessibilityLabel={`Foto de ${item.nome_contato}`}
-                          />
-                        </View>
-
-                        <View style={styles.contactInfoCol}>
-                          <Text
-                            style={[
-                              typography.labelLarge,
-                              { color: colors.textPrimary, fontWeight: '700' },
-                            ]}
-                          >
-                            {item.nome_contato}
-                          </Text>
-                          <Text
-                            style={[
-                              typography.bodyMedium,
-                              { color: colors.textSecondary, marginTop: 2, lineHeight: 18 },
-                            ]}
-                            numberOfLines={2}
-                          >
-                            {cleanUtf8(item.cargo_contato)}
-                          </Text>
-                          <Text
-                            style={[
-                              typography.caption,
-                              { color: colors.textMuted, marginTop: 4 },
-                            ]}
-                          >
-                            {item.conexoes_em_comum} conexões em comum
-                          </Text>
-                        </View>
-                      </View>
-
-                      {/* Botão Adicionar / Conectado */}
-                      <TouchableOpacity
-                        onPress={() => handleToggleConexao(item.id, item.nome_contato)}
-                        accessible={true}
-                        accessibilityRole="button"
-                        accessibilityLabel={
-                          item.conectado
-                            ? `Conectado com ${item.nome_contato}. Toque para desconectar`
-                            : `Adicionar ${item.nome_contato} à sua rede`
-                        }
+              contatosFiltrados.length === 0 ? (
+                <View
+                  style={[
+                    styles.emptyConnectionsCard,
+                    { backgroundColor: colors.surfaceSoft, borderColor: colors.cardBorder, borderRadius: radius.md },
+                  ]}
+                >
+                  <Image
+                    source={FIGMA_ASSETS.iconTabRede}
+                    style={{ width: 36, height: 36, tintColor: colors.primary, marginBottom: 10, opacity: 0.8 }}
+                    resizeMode="contain"
+                  />
+                  <Text style={[typography.titleMedium, { color: colors.textPrimary, fontWeight: '700', textAlign: 'center' }]}>
+                    {filtroConexoes === 'CONECTADAS' ? 'Nenhuma conexão ativa ainda' : 'Nenhuma sugestão disponível'}
+                  </Text>
+                  <Text style={[typography.bodyMedium, { color: colors.textSecondary, textAlign: 'center', marginTop: 4, lineHeight: 20 }]}>
+                    {filtroConexoes === 'CONECTADAS'
+                      ? 'Toque em "Ver suas conexões" para alternar para todas as sugestões e começar a adicionar contatos.'
+                      : 'Novos profissionais e empresas cadastrados na plataforma aparecerão aqui.'}
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.contactsGrid}>
+                  {contatosFiltrados.map((item) => {
+                    return (
+                      <View
+                        key={item.id}
                         style={[
-                          styles.connectBtn,
+                          styles.contactCard,
                           {
-                            backgroundColor: item.conectado
-                              ? colors.surfaceTint
-                              : colors.primaryDark,
-                            borderColor: colors.primaryDark,
+                            backgroundColor: colors.background,
+                            borderColor: colors.cardBorder,
+                            borderRadius: radius.md,
                           },
                         ]}
                       >
-                        <Text
+                        <View style={styles.contactCardTop}>
+                          {/* Foto Real de Cada Contato */}
+                          <View
+                            style={[
+                              styles.contactAvatarWrap,
+                              { borderColor: colors.primary },
+                            ]}
+                          >
+                            <Image
+                              source={getContactAvatar(item)}
+                              style={styles.contactAvatarImg}
+                              accessible={true}
+                              accessibilityLabel={`Foto de ${item.nome_contato}`}
+                            />
+                          </View>
+
+                          <View style={styles.contactInfoCol}>
+                            <Text
+                              style={[
+                                typography.labelLarge,
+                                { color: colors.textPrimary, fontWeight: '700' },
+                              ]}
+                            >
+                              {item.nome_contato}
+                            </Text>
+                            <Text
+                              style={[
+                                typography.bodyMedium,
+                                { color: colors.textSecondary, marginTop: 2, lineHeight: 18 },
+                              ]}
+                              numberOfLines={2}
+                            >
+                              {cleanUtf8(item.cargo_contato)}
+                            </Text>
+                            <Text
+                              style={[
+                                typography.caption,
+                                { color: colors.textMuted, marginTop: 4 },
+                              ]}
+                            >
+                              {item.conexoes_em_comum} conexões em comum
+                            </Text>
+                          </View>
+                        </View>
+
+                        {/* Botão Adicionar / Conectado */}
+                        <TouchableOpacity
+                          onPress={() => handleToggleConexao(item.id, item.nome_contato)}
+                          accessible={true}
+                          accessibilityRole="button"
+                          accessibilityLabel={
+                            item.conectado
+                              ? `Conectado com ${item.nome_contato}. Toque para desconectar`
+                              : `Adicionar ${item.nome_contato} à sua rede`
+                          }
                           style={[
-                            typography.labelLarge,
+                            styles.connectBtn,
                             {
-                              color: item.conectado ? colors.primaryDark : '#FFFFFF',
-                              fontWeight: '700',
+                              backgroundColor: item.conectado
+                                ? colors.surfaceTint
+                                : colors.primaryDark,
+                              borderColor: colors.primaryDark,
                             },
                           ]}
                         >
-                          {item.conectado ? 'Conectado ✓' : 'Adicionar +'}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })}
-              </View>
+                          <Text
+                            style={[
+                              typography.labelLarge,
+                              {
+                                color: item.conectado ? colors.primaryDark : '#FFFFFF',
+                                fontWeight: '700',
+                              },
+                            ]}
+                          >
+                            {item.conectado ? 'Conectado ✓' : 'Adicionar +'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </View>
+              )
             )}
 
             {/* Dica Construtiva de Rede */}
@@ -604,6 +655,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   contactsGrid: {
+    marginBottom: 16,
+  },
+  emptyConnectionsCard: {
+    padding: 24,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
   },
   contactCard: {

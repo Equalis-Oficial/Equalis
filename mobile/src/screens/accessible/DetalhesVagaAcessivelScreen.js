@@ -136,18 +136,24 @@ export default function DetalhesVagaAcessivelScreen() {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* BANNER INSTITUCIONAL VERDE RICO COM LOGO UNICEPLAC BRANCA E FOTOS DOS ATENDENTES */}
+        {/* BANNER INSTITUCIONAL DA EMPRESA */}
         <View style={styles.bannerCardAcessivel}>
           <View style={styles.bannerContentRowAcessivel}>
-            {/* Lado Esquerdo: Identidade Institucional UNICEPLAC */}
+            {/* Lado Esquerdo: Identidade Institucional da Empresa */}
             <View style={styles.bannerLeftColAcessivel}>
-              <Image
-                source={FIGMA_ASSETS.logoUniceplacBranca}
-                style={{ width: 120, height: 40, marginBottom: 8 }}
-                resizeMode="contain"
-                accessible={true}
-                accessibilityLabel="Logo Branca UNICEPLAC Centro Universitário"
-              />
+              {(vaga?.empresa_nome || '').toUpperCase().includes('UNICEPLAC') ? (
+                <Image
+                  source={FIGMA_ASSETS.logoUniceplacBranca}
+                  style={{ width: 120, height: 40, marginBottom: 8 }}
+                  resizeMode="contain"
+                  accessible={true}
+                  accessibilityLabel="Logo Branca UNICEPLAC Centro Universitário"
+                />
+              ) : (
+                <Text style={{ color: '#E0F2E9', fontSize: 16, fontWeight: '800', marginBottom: 4 }} numberOfLines={1}>
+                  {vaga?.empresa_nome || 'Oportunidade Inclusiva'}
+                </Text>
+              )}
               <Text accessibilityRole="header" style={styles.bannerTitleAcessivel}>
                 Vagas Abertas
               </Text>
@@ -158,7 +164,9 @@ export default function DetalhesVagaAcessivelScreen() {
                 Envie seu currículo para:
               </Text>
               <View style={styles.orangeBadgeAcessivel}>
-                <Text style={styles.orangeBadgeTextAcessivel}>www.uniceplac.edu.br</Text>
+                <Text style={styles.orangeBadgeTextAcessivel} numberOfLines={1}>
+                  {vaga?.link_externo || vaga?.empresa_site || ((vaga?.empresa_nome || '').toUpperCase().includes('UNICEPLAC') ? 'www.uniceplac.edu.br' : 'equalis.com.br')}
+                </Text>
               </View>
             </View>
 

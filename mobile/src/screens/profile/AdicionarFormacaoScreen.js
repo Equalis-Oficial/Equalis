@@ -192,7 +192,7 @@ export default function AdicionarFormacaoScreen() {
           label="Instituição de Ensino"
           value={instituicao}
           onChangeText={setInstituicao}
-          placeholder="Ex: Centro Universitário UNICEPLAC"
+          placeholder="Ex: Nome da Instituição de Ensino"
           required={true}
           error={erros.instituicao}
         />

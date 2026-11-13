@@ -3,23 +3,34 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 
 export default function DetalhesVagaBanner({
+  vaga = {},
   isSpeaking = false,
   onToggleVoiceAssist,
   colors,
 }) {
+  const isUniceplac = (vaga?.empresa_nome || '').toUpperCase().includes('UNICEPLAC');
+  const empresaNome = vaga?.empresa_nome || 'Oportunidade Inclusiva';
+  const siteUrl = vaga?.link_externo || vaga?.empresa_site || (isUniceplac ? 'www.uniceplac.edu.br' : 'equalis.com.br');
+
   return (
     <View style={styles.bannerContainer}>
       <View style={styles.bannerGradientBg}>
         <View style={styles.bannerContentRow}>
-          {/* Lado Esquerdo: Textos institucionais + Logo Branca UNICEPLAC */}
+          {/* Lado Esquerdo: Textos institucionais + Logo Branca / Nome da Empresa */}
           <View style={styles.bannerLeftCol}>
-            <Image
-              source={FIGMA_ASSETS.logoUniceplacBranca}
-              style={{ width: 110, height: 36, marginBottom: 8 }}
-              resizeMode="contain"
-              accessible={true}
-              accessibilityLabel="Logo Branca UNICEPLAC Centro Universitário"
-            />
+            {isUniceplac ? (
+              <Image
+                source={FIGMA_ASSETS.logoUniceplacBranca}
+                style={{ width: 110, height: 36, marginBottom: 8 }}
+                resizeMode="contain"
+                accessible={true}
+                accessibilityLabel="Logo Branca UNICEPLAC Centro Universitário"
+              />
+            ) : (
+              <Text style={styles.bannerEmpresaTitulo} numberOfLines={1}>
+                {empresaNome}
+              </Text>
+            )}
             <Text accessibilityRole="header" style={styles.bannerVagasAbertasTitle}>
               Vagas Abertas
             </Text>
@@ -30,7 +41,7 @@ export default function DetalhesVagaBanner({
               Envie seu currículo para:
             </Text>
             <View style={styles.orangeBadge}>
-              <Text style={styles.orangeBadgeText}>www.uniceplac.edu.br</Text>
+              <Text style={styles.orangeBadgeText} numberOfLines={1}>{siteUrl}</Text>
             </View>
           </View>
 
@@ -115,6 +126,14 @@ const styles = StyleSheet.create({
   },
   bannerLeftCol: {
     flex: 1.15,
+  },
+  bannerEmpresaTitulo: {
+    color: '#E0F2E9',
+    fontSize: 15,
+    fontWeight: '800',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   bannerVagasAbertasTitle: {
     color: '#FFFFFF',

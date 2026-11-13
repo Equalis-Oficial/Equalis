@@ -29,6 +29,7 @@ export default function AccessibleHeader({
     speak,
     isSpeaking,
     stopSpeaking,
+    silenciarVozCompleta,
     speechBannerText,
     setIsA11yModalOpen,
   } = useAccessibility();
@@ -341,10 +342,10 @@ export default function AccessibleHeader({
               <Text style={styles.stopAudioText}>Parar</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={stopSpeaking}
+              onPress={silenciarVozCompleta}
               accessible={true}
               accessibilityRole="button"
-              accessibilityLabel="Fechar aviso de voz"
+              accessibilityLabel="Silenciar voz e fechar aviso"
               style={styles.closeAudioBtn}
             >
               <Text style={styles.closeAudioText}>✕</Text>

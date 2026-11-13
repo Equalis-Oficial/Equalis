@@ -75,32 +75,7 @@ export function AuthAndDataProvider({ children }) {
 
   const [publicacoes, setPublicacoes] = useState([]);
 
-  const [conexoes, setConexoes] = useState([
-    {
-      id: 1,
-      nome_contato: 'Charles Oliveira',
-      cargo_contato: 'Gerente de projetos com foco em crescimento em equipe',
-      conexoes_em_comum: 0,
-      total_conexoes: 312,
-      conectado: false,
-    },
-    {
-      id: 2,
-      nome_contato: 'Helena Costa',
-      cargo_contato: 'Tech Recruiter Especialista em Diversidade e Inclusão PcD',
-      conexoes_em_comum: 0,
-      total_conexoes: 418,
-      conectado: false,
-    },
-    {
-      id: 3,
-      nome_contato: 'Rafael Mendes',
-      cargo_contato: 'Desenvolvedor Mobile & Especialista em Acessibilidade WCAG',
-      conexoes_em_comum: 0,
-      total_conexoes: 204,
-      conectado: false,
-    },
-  ]);
+  const [conexoes, setConexoes] = useState([]);
 
   const [mensagens, setMensagens] = useState([]);
   const [notificacoes, setNotificacoes] = useState([]);
@@ -354,7 +329,7 @@ export function AuthAndDataProvider({ children }) {
     setMensagens([]);
     setNotificacoes(INITIAL_NOTIFICACOES || []);
     setServerUnreadCount(0);
-    setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
+    setConexoes([]);
     setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
     setSearchTerm('');
     setScreenParams({});
@@ -378,11 +353,11 @@ export function AuthAndDataProvider({ children }) {
       }
       if (activeSessionRef.current !== sessionEpoch) return data;
       setMensagens([]);
-      setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
       setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
       setSessionToken(data.token);
       setUserType(data.tipo);
       if (data.tipo === 'EMPRESA') {
+        setConexoes([]);
         setCandidatoPerfil(EMPTY_CANDIDATO);
         setFormacoes([]);
         setExperiencias([]);
@@ -461,11 +436,11 @@ export function AuthAndDataProvider({ children }) {
       }
       if (activeSessionRef.current !== sessionEpoch) return data;
       setMensagens([]);
-      setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
       setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
       setSessionToken(data.token);
       setUserType(data.tipo);
       if (data.tipo === 'EMPRESA') {
+        setConexoes([]);
         setCandidatoPerfil(EMPTY_CANDIDATO);
         setFormacoes([]);
         setExperiencias([]);
@@ -610,7 +585,7 @@ export function AuthAndDataProvider({ children }) {
     setMensagens([]);
     setNotificacoes([]);
     setServerUnreadCount(0);
-    setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
+    setConexoes([]);
     setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
     setUserType('CANDIDATO');
     setSessionToken(saved.token || `token-${Date.now()}`);
@@ -656,7 +631,7 @@ export function AuthAndDataProvider({ children }) {
     setMensagens([]);
     setNotificacoes([]);
     setServerUnreadCount(0);
-    setConexoes((prev) => prev.map((c) => ({ ...c, conectado: false, conexoes_em_comum: 0 })));
+    setConexoes([]);
     setPublicacoes((prev) => prev.map((p) => ({ ...p, curtidoPeloUsuario: false })));
     setUserType('EMPRESA');
     setSessionToken(saved.token || `token-${Date.now()}`);

@@ -30,12 +30,18 @@ export function AccessibilityProvider({ children }) {
     }
     try {
       if (Platform.OS === 'web' && typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.pause();
         window.speechSynthesis.cancel();
       }
     } catch (_) {}
     setIsSpeaking(false);
     setSpeechBannerText('');
   }, []);
+
+  const silenciarVozCompleta = useCallback(() => {
+    stopSpeaking();
+    setVoiceEnabled(false);
+  }, [stopSpeaking]);
 
   const speak = useCallback((text, force = false) => {
     if (!text) return;
@@ -114,6 +120,7 @@ export function AccessibilityProvider({ children }) {
       speechBannerText,
       speak,
       stopSpeaking,
+      silenciarVozCompleta,
       isA11yModalOpen,
       setIsA11yModalOpen,
     }),
@@ -128,6 +135,7 @@ export function AccessibilityProvider({ children }) {
       speechBannerText,
       speak,
       stopSpeaking,
+      silenciarVozCompleta,
       isA11yModalOpen,
     ]
   );

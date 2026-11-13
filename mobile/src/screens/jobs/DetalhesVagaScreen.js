@@ -153,8 +153,9 @@ export default function DetalhesVagaScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* BANNER INSTITUCIONAL UNICEPLAC */}
+        {/* BANNER INSTITUCIONAL DA EMPRESA */}
         <DetalhesVagaBanner
+          vaga={vaga}
           isSpeaking={isSpeaking}
           onToggleVoiceAssist={handleOuvirDetalhesVaga}
           colors={colors}

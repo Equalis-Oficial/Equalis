@@ -33,7 +33,7 @@ export default function JobCard({
     >
       {/* Linha 1: Logo da Empresa + Nome + Badges */}
       <View style={styles.cardHeaderRow}>
-        {vaga.empresa_nome?.includes('UNICEPLAC') || vaga.empresa_id === 1 ? (
+        {vaga.empresa_nome?.toUpperCase()?.includes('UNICEPLAC') ? (
           <Image
             source={FIGMA_ASSETS.logoUniceplacQuadrada}
             style={styles.companyLogoImg}

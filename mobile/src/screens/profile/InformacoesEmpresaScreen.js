@@ -176,7 +176,7 @@ export default function InformacoesEmpresaScreen() {
                 });
               }
             }}
-            placeholder="Ex: Centro Universitário UNICEPLAC"
+            placeholder="Ex: Nome da sua Empresa Ltda"
             error={errors.nomeFantasia}
             accessibilityHint="Informe o nome fantasia ou razão social da empresa"
           />
@@ -194,7 +194,7 @@ export default function InformacoesEmpresaScreen() {
                 });
               }
             }}
-            placeholder="Ex: Ensino Superior e Saúde, Tecnologia, etc."
+            placeholder="Ex: Tecnologia, Saúde, Educação, etc."
             error={errors.setor}
             accessibilityHint="Informe a área de atuação da empresa"
           />
@@ -212,7 +212,7 @@ export default function InformacoesEmpresaScreen() {
                 });
               }
             }}
-            placeholder="Ex: Brasília - DF ou Gama - DF"
+            placeholder="Ex: Brasília - DF ou São Paulo - SP"
             error={errors.localizacao}
             accessibilityHint="Informe a cidade e UF da sede corporativa"
           />
@@ -229,7 +229,7 @@ export default function InformacoesEmpresaScreen() {
                 });
               }
             }}
-            placeholder="Ex: https://www.uniceplac.edu.br ou www.empresa.com"
+            placeholder="Ex: https://www.suaempresa.com.br"
             keyboardType="url"
             autoCapitalize="none"
             error={errors.site}
@@ -249,7 +249,7 @@ export default function InformacoesEmpresaScreen() {
                 });
               }
             }}
-            placeholder="Ex: contato@uniceplac.edu.br"
+            placeholder="Ex: contato@suaempresa.com.br"
             keyboardType="email-address"
             autoCapitalize="none"
             error={errors.email}

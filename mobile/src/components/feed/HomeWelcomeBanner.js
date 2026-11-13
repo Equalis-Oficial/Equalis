@@ -13,7 +13,7 @@ import { FIGMA_ASSETS } from '../../theme/figmaAssets';
 export default function HomeWelcomeBanner({
   userType = 'CANDIDATO',
   primeiroNome = 'Maria',
-  empresaNome = 'Centro Universitário UNICEPLAC',
+  empresaNome = 'Empresa Inclusiva',
   onAvatarPress,
   searchValue = '',
   onSearchChange,
